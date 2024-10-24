@@ -1,8 +1,6 @@
 package org.example.projectback.api.dto;
 
 import lombok.*;
-import org.example.projectback.store.entity.InterestEntity;
-import org.example.projectback.store.entity.UserEntity;
 
 import java.util.List;
 @Data
@@ -26,8 +24,8 @@ public class GroupDto {
     private String description;
 
     @NonNull
-    private List<UserEntity> users;
+    private List<UserDto> users;
 
     @NonNull
-    private List<InterestEntity> interests;
+    private List<InterestDto> interests;
 }

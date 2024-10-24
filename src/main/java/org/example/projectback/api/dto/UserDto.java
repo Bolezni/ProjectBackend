@@ -2,9 +2,6 @@ package org.example.projectback.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.example.projectback.store.entity.GroupEntity;
-import org.example.projectback.store.entity.InterestEntity;
-import org.example.projectback.store.entity.UserEntity;
 import org.example.projectback.store.entity.enums.Gender;
 
 import javax.validation.constraints.Email;
@@ -57,11 +54,11 @@ public class UserDto {
     private LocalDate birthDay;
 
     @NonNull
-    private Set<UserEntity> friends;
+    private Set<FriendDto> friends;
 
     @NonNull
-    private List<GroupEntity> groups;
+    private List<GroupDto> groups;
 
     @NonNull
-    private List<InterestEntity> interests;
+    private List<InterestDto> interests;
 }
