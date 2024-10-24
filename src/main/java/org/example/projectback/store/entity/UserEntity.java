@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.projectback.store.entity.enums.Gender;
 
-import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -37,7 +36,6 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false)
-    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private String email;
 
     @Column(nullable = false)
