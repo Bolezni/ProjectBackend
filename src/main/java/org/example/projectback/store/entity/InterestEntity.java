@@ -2,10 +2,6 @@ package org.example.projectback.store.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.User;
-
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter

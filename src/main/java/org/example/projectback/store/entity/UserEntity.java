@@ -3,7 +3,6 @@ package org.example.projectback.store.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.projectback.store.entity.enums.Gender;
-import org.hibernate.annotations.processing.Pattern;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
