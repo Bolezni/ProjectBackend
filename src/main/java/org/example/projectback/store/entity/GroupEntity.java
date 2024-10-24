@@ -3,6 +3,7 @@ package org.example.projectback.store.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,10 @@ public class GroupEntity {
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY,cascade= CascadeType.ALL)
-    private List<UserEntity> users;
+    @Builder.Default
+    private List<UserEntity> users = new ArrayList<>();
 
     @OneToMany
-    private List<InterestEntity> interests;
+    @Builder.Default
+    private List<InterestEntity> interests = new ArrayList<>();
 }

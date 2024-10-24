@@ -17,10 +17,9 @@ import java.util.UUID;
 public class InterestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
-
 
 }

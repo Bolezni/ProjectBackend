@@ -6,9 +6,7 @@ import org.example.projectback.store.entity.enums.Gender;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -57,14 +55,17 @@ public class UserEntity {
     private LocalDate birthDay;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private Set<UserEntity> friends;
+    @Builder.Default
+    private Set<UserEntity> friends = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY,cascade= CascadeType.ALL)
-    private List<GroupEntity> groups;
+    @Builder.Default
+    private List<GroupEntity> groups = new ArrayList<>();
 
 
-    @OneToMany
-    private List<InterestEntity> interests;
+    @OneToMany(fetch = FetchType.LAZY,cascade= CascadeType.ALL)
+    @Builder.Default
+    private List<InterestEntity> interests = new ArrayList<>();
 
     public Integer getAge() {
         return Period.between(birthDay, LocalDate.now()).getYears();
