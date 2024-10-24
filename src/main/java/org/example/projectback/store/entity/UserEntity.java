@@ -3,7 +3,9 @@ package org.example.projectback.store.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.projectback.store.entity.enums.Gender;
+import org.hibernate.annotations.processing.Pattern;
 
+import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -36,15 +38,19 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false)
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private String email;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String description;
 
     @Column(nullable = false)
     private String tgName;
+
+    private String profileImageId;
 
     @Builder.Default
     private boolean isAdmin = false;

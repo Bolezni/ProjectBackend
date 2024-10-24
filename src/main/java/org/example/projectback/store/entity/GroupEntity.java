@@ -35,7 +35,7 @@ public class GroupEntity {
     @Builder.Default
     private List<UserEntity> users = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY,cascade= CascadeType.ALL)
     @Builder.Default
     private List<InterestEntity> interests = new ArrayList<>();
 }
