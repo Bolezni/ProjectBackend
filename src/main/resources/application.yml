@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    hikari:
+       password: admin
+       username: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/project_back
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080

@@ -53,12 +53,9 @@ public class UserDto {
     @NonNull
     private LocalDate birthDay;
 
-    @NonNull
     private Set<FriendDto> friends;
 
-    @NonNull
     private List<GroupDto> groups;
 
-    @NonNull
     private List<InterestDto> interests;
 }

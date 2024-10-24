@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.projectback.store.entity.enums.Gender;
 
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -21,7 +22,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false, name = "login")
+    @Column(unique = true,nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -33,6 +34,7 @@ public class UserEntity {
     private String patronymic; //отчество
 
     @Column(nullable = false)
+    @Min(value = 6,message = "Password must consist of at least 6 characters")
     private String password;
 
     @Column(nullable = false)

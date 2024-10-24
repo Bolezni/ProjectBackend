@@ -18,4 +18,7 @@ public class InterestEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false,length = 6)
+    @Builder.Default
+    private String color = "878787";
 }
