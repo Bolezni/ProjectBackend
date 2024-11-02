@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testProject_back
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      username: postgres
+      password: admin
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080
+
+
