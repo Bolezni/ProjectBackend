@@ -1,0 +1,29 @@
+services:
+  postgresdb:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: testProject_back
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data  # Persist database data
+
+  app:
+    depends_on:
+      - postgresdb
+    build: .  # Path to your Spring Boot app's Dockerfile
+    restart: on-failure
+    ports:
+      - "8080:8080"  # Expose Spring Boot app on port 8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/testProject_back
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+volumes:
+  db_data:
