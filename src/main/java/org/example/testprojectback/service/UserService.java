@@ -130,7 +130,7 @@ public class UserService {
 
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new RuntimeException("User already exist"));
 
         if(userDtoUpdate.birthDay() != null &&
                 !userDtoUpdate.birthDay().isAfter(LocalDate.of(1970, 1,1)) &&
