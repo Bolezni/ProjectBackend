@@ -2,6 +2,8 @@ package org.example.testprojectback.dto;
 
 import org.example.testprojectback.model.Gender;
 
+import java.time.LocalDate;
+
 public record UserDtoResponse(
         String username,
         String firstname,
@@ -13,6 +15,7 @@ public record UserDtoResponse(
         String profileImageId,
         String description,
         boolean isAdmin,
-        Integer age
+        Integer age,
+        LocalDate birthday
 ) {
 }

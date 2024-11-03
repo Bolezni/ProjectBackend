@@ -19,7 +19,8 @@ public class UserDtoResponseMapper {
                 user.getProfileImageId(),
                 user.getDescription(),
                 user.isAdmin(),
-                user.getAge()
+                user.getAge(),
+                user.getBirthDay()
         );
     }
 
