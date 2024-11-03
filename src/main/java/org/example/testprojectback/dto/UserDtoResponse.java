@@ -12,6 +12,7 @@ public record UserDtoResponse(
         String tgName,
         String profileImageId,
         String description,
+        boolean isAdmin,
         Integer age
 ) {
 }

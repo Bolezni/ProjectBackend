@@ -18,6 +18,8 @@ public class UserDtoMapper {
                 user.getTgName(),
                 user.getDescription(),
                 user.getProfileImageId(),
+                user.getAge(),
+                user.isAdmin(),
                 user.getBirthDay()
         );
     }
