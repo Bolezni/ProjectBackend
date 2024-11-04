@@ -28,7 +28,6 @@ public class UserController {
 
     private static final String GET_USER_CREATED_GROUPS = "/api/user/{login}/groups/created";
     private static final String UPLOAD_PROFILE_IMAGE = "/api/user/{login}/profile-image";
-    //private static final String GET_PROFILE_IMAGE = "/api/user/{login}/profile-image";
     private static final String DELETE_INTEREST = "/api/user/{login}/interest/delete";
     private static final String DELETE_INTERESTS = "/api/user/{login}/interests";
     private static final String ADD_INTEREST = "/api/user/{login}/interests";

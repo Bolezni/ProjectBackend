@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.sercurity.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,8 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig  implements WebMvcConfigurer {
+public class SecurityConfig  {
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -34,8 +33,10 @@ public class SecurityConfig  implements WebMvcConfigurer {
         http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/**").authenticated())
+                .formLogin(Customizer.withDefaults())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -47,13 +48,15 @@ public class SecurityConfig  implements WebMvcConfigurer {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://*.example.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true); // Allow credentials
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // Apply to all endpoints
         return source;
     }
 }

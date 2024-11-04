@@ -17,7 +17,6 @@ public class AdminController {
 
     private final AdminService adminService;
 
-
     private static final String GET_ALL_USERS = "/users";
     private static final String GET_ALL_GROUPS = "/groups";
     private static final String GET_ALL_INTERESTS = "/interests";
@@ -26,7 +25,7 @@ public class AdminController {
     private static final String DELETE_GROUP_BY_ID = "/group/{id}";
     private static final String DELETE_USER_BY_LOGIN = "/user/delete";
 
-
+    @CrossOrigin
     @GetMapping(GET_ALL_USERS)
     public List<UserDto> getAllUsers() {
         return adminService.getAllUsers();
