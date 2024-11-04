@@ -19,4 +19,4 @@ services:
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8080:8080"
