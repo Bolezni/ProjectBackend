@@ -1,11 +1,7 @@
 package org.example.testprojectback.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.testprojectback.model.Gender;
-import org.example.testprojectback.model.User;
-import org.example.testprojectback.repository.UserRepository;
 import org.example.testprojectback.sercurity.jwt.JwtFilter;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,12 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig  implements WebMvcConfigurer {
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -42,4 +40,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(4);
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:*")
+                .allowedMethods("*")
+                .allowCredentials(true);
+
+    }
 }
