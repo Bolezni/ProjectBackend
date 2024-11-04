@@ -1,7 +1,6 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.testprojectback.dto.FriendShipDto;
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.FriendshipRepository;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +17,6 @@ import java.util.stream.Collectors;
 public class FriendShipService {
 
     private final FriendshipRepository friendshipRepository;
-
-    private final NotificationService notificationService;
 
     private final UserRepository userRepository;
 
@@ -41,90 +37,112 @@ public class FriendShipService {
     @Transactional
     public void sendFriendRequest(String userName, String friendName) {
 
-        if(userName.isEmpty() || friendName.isEmpty()) {
+        if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
         }
-
-        if(userName.equals(friendName)) {
+        if (userName.equals(friendName)) {
             throw new RuntimeException("Username and Friend name cannot be the same");
         }
 
-
-        User user = userRepository
-                .findByUsername(userName)
+        User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User  not found"));
 
-        User friend = userRepository
-                .findByUsername(friendName)
+        User friend = userRepository.findByUsername(friendName)
                 .orElseThrow(() -> new RuntimeException("Friend not found"));
 
+        Friendship friendship = Friendship.builder()
+                .user(user)
+                .friend(friend)
+                .status("PENDING")
+                .build();
 
-        Friendship friendship = friendshipRepository
-                .findByUserAndFriend(user, friend);
-
-        if (friendship == null) {
-            friendship = Friendship.builder()
-                    .user(user)
-                    .friend(friend)
-                    .status("PENDING")
-                    .build();
-
-            friendshipRepository.saveAndFlush(friendship);
-
-        }
+        friendshipRepository.save(friendship);
     }
 
 
     @Transactional
     public void acceptFriendRequest(String userName, String friendName) {
 
-        if(userName.isEmpty() || friendName.isEmpty()) {
+        if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
         }
-        if(userName.equals(friendName)) {
+        if (userName.equals(friendName)) {
             throw new RuntimeException("Username and Friend name cannot be the same");
         }
 
         User user = userRepository.findByUsername(userName)
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User  not found"));
 
         User friend = userRepository.findByUsername(friendName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Friend not found"));
 
-        Friendship friendship = friendshipRepository.findByUserAndFriend(user, friend);
+        Friendship friendship = friendshipRepository.findByUserAndFriend(friend, user)
+                .orElseThrow(() -> new RuntimeException("Friend request not found"));
 
-        if (friendship != null && friendship.getStatus().equals("PENDING")) {
+        if (friendship.getStatus().equals("PENDING")) {
             friendship.setStatus("ACCEPTED");
             friendship.setUpdatedAt(LocalDateTime.now());
-            friendshipRepository.saveAndFlush(friendship);
+            friendshipRepository.save(friendship);
+
+            Friendship reverseFriendship =  Friendship.builder()
+                    .user(user)
+                    .friend(friend)
+                    .status("ACCEPTED")
+                    .build();
+
+            friendshipRepository.save(reverseFriendship);
         }
     }
 
     @Transactional
-    public void declineFriendRequest(String userName, String friendUserName) {
-
-        if(userName.isEmpty() || friendUserName.isEmpty()) {
+    public void declineFriendRequest(String userName, String friendName) {
+        if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
         }
-
-        if(userName.equals(friendUserName)) {
+        if (userName.equals(friendName)) {
             throw new RuntimeException("Username and Friend name cannot be the same");
         }
 
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User  not found"));
 
+        User friend = userRepository.findByUsername(friendName)
+                .orElseThrow(() -> new RuntimeException("Friend not found"));
 
-        User friend = userRepository.findByUsername(friendUserName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Friendship friendship = friendshipRepository.findByUserAndFriend(friend, user)
+                .orElseThrow(() -> new RuntimeException("Friend request not found"));
 
-        Friendship friendship = friendshipRepository.findByUserAndFriend(user, friend);
-
-        if (friendship != null && friendship.getStatus().equals("PENDING")) {
+        if (friendship.getStatus().equals("PENDING")) {
             friendship.setStatus("DECLINED");
             friendship.setUpdatedAt(LocalDateTime.now());
-            friendshipRepository.saveAndFlush(friendship);
+            friendshipRepository.save(friendship);
         }
     }
+    @Transactional
+    public void removeFriend(String userName, String friendName) {
+        if (userName.isEmpty() || friendName.isEmpty()) {
+            throw new RuntimeException("Username or Friend name cannot be empty");
+        }
+        if (userName.equals(friendName)) {
+            throw new RuntimeException("Username and Friend name cannot be the same");
+        }
+
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new RuntimeException("User  not found"));
+
+        User friend = userRepository.findByUsername(friendName)
+                .orElseThrow(() -> new RuntimeException("Friend not found"));
+
+        Friendship friendship = friendshipRepository.findByUserAndFriend(user, friend)
+                .orElseThrow(() -> new RuntimeException("Friendship not found"));
+
+        friendshipRepository.delete(friendship);
+
+        Friendship reverseFriendship = friendshipRepository.findByUserAndFriend(friend, user)
+                .orElseThrow(() -> new RuntimeException("Reverse friendship not found"));
+
+        friendshipRepository.delete(reverseFriendship);
+    }
+
 
 }

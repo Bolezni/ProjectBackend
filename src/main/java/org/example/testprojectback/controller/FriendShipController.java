@@ -3,6 +3,7 @@ package org.example.testprojectback.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.UserDtoUpdate;
 import org.example.testprojectback.mapper.UserDtoUpdatesMapper;
+import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.service.FriendShipService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,35 +16,36 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FriendShipController {
 
+
     private final FriendShipService friendShipService;
     private final UserDtoUpdatesMapper userDtoUpdatesMapper;
 
-    private static final String ACCEPT_FRIEND = "/{login}/accept";
-    private static final String DECLINE_FRIEND = "/{login}/decline";
+    private static final String ACCEPT_FRIEND = "/accept";
+    private static final String DECLINE_FRIEND = "/decline";
     private static final String GET_FRIENDS = "/search";
-    private static final String REQUEST_FRIEND = "/{login}/request";
-
+    private static final String REQUEST_FRIEND = "/send";
+    private static final String REMOVE = "/remove";
 
     @PostMapping(REQUEST_FRIEND)
-    public ResponseEntity<?> sendFriendRequest(@PathVariable(name = "login") String userName,
-                                               @RequestParam(name = "friendLogin") String friendLogin){
-        friendShipService.sendFriendRequest(userName, friendLogin);
+    public ResponseEntity<Friendship> sendFriendRequest(@RequestParam(name = "login") String userName,
+                                               @RequestParam(name = "friendLogin") String friendName){
+        friendShipService.sendFriendRequest(userName, friendName);
 
         return ResponseEntity.ok().build();
     }
 
 
     @PostMapping(ACCEPT_FRIEND)
-    public ResponseEntity<?> acceptFriendRequest(@PathVariable(name = "login") String userName,
-                                          @RequestParam(name = "friendLogin") String friendLogin) {
-        friendShipService.acceptFriendRequest(userName, friendLogin);
+    public ResponseEntity<Friendship> acceptFriendRequest(@RequestParam(name = "login") String userName,
+                                                          @RequestParam(name = "friendLogin") String friendName) {
+        friendShipService.acceptFriendRequest(userName, friendName);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(DECLINE_FRIEND)
-    public ResponseEntity<?> declineFriendRequest(@PathVariable(name = "login") String userName,
-                                          @RequestParam(name = "friendLogin") String friendLogin) {
-        friendShipService.declineFriendRequest(userName, friendLogin);
+    public ResponseEntity<Friendship> declineFriendRequest(@RequestParam(name = "login") String userName,
+                                          @RequestParam(name = "friendLogin") String friendName) {
+        friendShipService.declineFriendRequest(userName, friendName);
         return ResponseEntity.ok().build();
     }
 
@@ -53,6 +55,12 @@ public class FriendShipController {
                 stream()
                 .map(userDtoUpdatesMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @DeleteMapping(REMOVE)
+    public ResponseEntity<String> removeFriend(@RequestParam String userName, @RequestParam String friendName) {
+        friendShipService.removeFriend(userName, friendName);
+        return ResponseEntity.ok("Friend removed successfully.");
     }
 
 
