@@ -16,6 +16,7 @@ public class GroupDtoMapper  {
 
     public GroupDto toDto(Group group) {
         return new GroupDto(
+                group.getId(),
                 group.getChars(),
                 group.getName(),
                 group.getColor(),
@@ -32,6 +33,7 @@ public class GroupDtoMapper  {
 
     public Group toEntity(GroupDto groupDto) {
         return new Group(
+                groupDto.id(),
                 groupDto.chars(),
                 groupDto.name(),
                 groupDto.color(),

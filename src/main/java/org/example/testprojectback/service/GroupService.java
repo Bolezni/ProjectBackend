@@ -5,7 +5,6 @@ import org.example.testprojectback.dto.GroupDto;
 import org.example.testprojectback.dto.InterestDto;
 import org.example.testprojectback.dto.UserDto;
 import org.example.testprojectback.mapper.GroupDtoMapper;
-import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.model.Notification;
@@ -17,12 +16,8 @@ import org.example.testprojectback.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -156,22 +151,35 @@ public class GroupService {
 
     @Transactional
     public List<GroupDto> fetchGroupsByName(Optional<String> optionalPrefixName) {
-        optionalPrefixName = optionalPrefixName.filter(prefix -> !prefix.trim().isEmpty());
+        if (optionalPrefixName.isPresent() && !optionalPrefixName.get().isEmpty()) {
 
-        Stream<Group> projectStream = optionalPrefixName
-                .map(groupRepository::streamAllByNameIgnoreCase)
-                .orElseGet(groupRepository::streamAllBy);
+            List<Group> groups = groupRepository.findByNameStartingWith(optionalPrefixName.get());
 
-        return projectStream.map(groupDtoMapper::toDto)
-                .collect(Collectors.toList());
+            return groups.stream()
+                    .map(groupDtoMapper::toDto)
+                    .collect(Collectors.toList());
+        } else {
+            return groupRepository.findAll().stream()
+                    .map(groupDtoMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+
+
+
     }
     @Transactional
     public List<GroupDto> fetchGroupsByInterest(Set<InterestDto> interests) {
-        Set<String> interestIds = interests.stream()
+        if (interests == null || interests.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Set<String> interestNames = interests.stream()
                 .map(InterestDto::name)
                 .collect(Collectors.toSet());
 
-        List<Group> groups = groupRepository.findByInterests(interestIds);
+        Set<Interest> interestSet = interestRepository.findByNameIn(interestNames);
+
+        List<Group> groups = groupRepository.findByInterestsIn(interestSet);
 
         return groups.stream()
                 .map(groupDtoMapper::toDto)
@@ -179,7 +187,7 @@ public class GroupService {
     }
     @Transactional
     public void deleteGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId)
+        groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
         groupRepository.deleteById(groupId);
@@ -194,10 +202,11 @@ public class GroupService {
             throw new RuntimeException("Invitation already accepted");
         }
 
-        User user = notification.getUser ();
+        User user = notification.getUser();
         Group group = notification.getGroup();
 
         group.getSubscribers().add(user);
+
         groupRepository.save(group);
 
         notificationService.acceptNotification(notificationId);

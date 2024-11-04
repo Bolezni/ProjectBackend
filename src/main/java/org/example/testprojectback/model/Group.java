@@ -3,9 +3,7 @@ package org.example.testprojectback.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -51,6 +49,15 @@ public class Group {
     private Set<Interest> interests = new HashSet<>();
 
     public Group(String chars, String name, String color, String description, User creator) {
+        this.chars = chars;
+        this.name = name;
+        this.color = color;
+        this.description = description;
+        this.creator = creator;
+    }
+
+    public Group(Long id, String chars, String name, String color, String description, User creator) {
+        this.id = id;
         this.chars = chars;
         this.name = name;
         this.color = color;

@@ -3,6 +3,7 @@ package org.example.testprojectback.dto;
 import java.util.Set;
 
 public record GroupDto(
+        Long id,
         String chars,
         String name,
         String color,
