@@ -39,13 +39,4 @@ public class SecurityConfig  implements WebMvcConfigurer {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder(4);
     }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
-                .allowedMethods("*")
-                .allowCredentials(true);
-
-    }
 }
