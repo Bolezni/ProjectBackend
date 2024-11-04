@@ -164,8 +164,6 @@ public class GroupService {
                     .collect(Collectors.toList());
         }
 
-
-
     }
     @Transactional
     public List<GroupDto> fetchGroupsByInterest(Set<InterestDto> interests) {
