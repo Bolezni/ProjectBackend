@@ -21,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,7 +72,7 @@ public class UserService {
                 .description(userDto.description())
                 .tgName(userDto.tgName())
                 .gender(userDto.gender())
-                .isAdmin(false)
+                .isAdmin(userDto.isAdmin())
                 .profileImageId(userDto.profileImageId())
                 .build();
 
@@ -228,7 +231,7 @@ public class UserService {
 
         return userDtoResponseMapper.toDto(user);
     }
-@Transactional
+    @Transactional
     public void updateSecurityUserData(String userName,String newUserName, String newPassword, String newEmail) {
 
         User user = userRepository
@@ -244,21 +247,18 @@ public class UserService {
         if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
             throw new RuntimeException("Email already exists");
         }
-
-        validatePassword(newPassword);
-
-        if (!user.getUsername().equals(newUserName)) {
-            user.setUsername(newUserName);
+        if (newPassword == null && newPassword.trim().length() < 6 && !newPassword.isEmpty()) {
+            throw new IllegalArgumentException("Password must be at least 6 characters");
         }
-        if (!user.getEmail().equals(newEmail)) {
-            user.setEmail(newEmail);
-        }
+
+        user.setUsername(newUserName);
+        user.setEmail(newEmail);
         user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.saveAndFlush(user);
     }
 
-@Transactional
+    @Transactional
     public Set<InterestDto> getInterests(String userName) {
         User user = userRepository
                 .findByUsername(userName)
@@ -319,11 +319,6 @@ public class UserService {
         }
     }
 
-    private void validatePassword(String password) {
-        if (password == null || password.trim().length() < 6) {
-            throw new IllegalArgumentException("Password must be at least 6 characters");
-        }
-    }
 
     public void uploadProfileImage(String userName, String profileImageId) {
         User user = userRepository
@@ -357,7 +352,7 @@ public class UserService {
         }
         return false;
     }
-
+    @Transactional
     public Set<GroupDto> getUserSubscribedGroups(String userName) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User  not found"));
@@ -366,7 +361,7 @@ public class UserService {
                 .map(groupDtoMapper::toDto)
                 .collect(Collectors.toSet());
     }
-
+    @Transactional
     public void unSubscribeGroup(String userName, Long groupId) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -379,5 +374,32 @@ public class UserService {
         userRepository.saveAndFlush(user);
 
         groupRepository.saveAndFlush(group);
+    }
+
+    public void subscribeToGroup(String username, Long groupId) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User  not found"));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if(user.getSubscribedGroups().contains(group)){
+            throw new RuntimeException("Group  already exists");
+        }else {
+            user.getSubscribedGroups().add(group);
+        }
+
+
+        if(group.getSubscribers().contains(user)){
+            throw new RuntimeException("User  already exists");
+        }else{
+            group.getSubscribers().add(user);
+        }
+
+
+        userRepository.saveAndFlush(user);
+
+        groupRepository.saveAndFlush(group);
+
     }
 }

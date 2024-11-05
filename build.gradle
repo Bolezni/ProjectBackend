@@ -37,7 +37,7 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.3.5'
-
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 }
 

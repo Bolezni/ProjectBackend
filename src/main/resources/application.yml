@@ -12,7 +12,22 @@ spring:
         use_sql_comments: true
     hibernate:
       ddl-auto: update
-
+  spring:
+    security:
+      oauth2:
+        client:
+          registration:
+            my-oauth2-client:
+              client-id: 634777143224-lt3aatkkqjuvaopdninsnd0ba9q1ju20.apps.googleusercontent.com
+              client-secret: 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
+              authorization-grant-type: authorization_code
+              scope: read,write
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          provider:
+            my-oauth2-provider:
+              authorization-uri: https://example.com/oauth2/authorize
+              token-uri: https://example.com/oauth2/token
+              user-info-uri: https://example.com/userinfo
 server:
   port: 8080
 

@@ -219,9 +219,23 @@ public class GroupService {
         User user = notification.getUser();
         Group group = notification.getGroup();
 
-        group.getSubscribers().add(user);
+        if(user.getSubscribedGroups().contains(group)) {
+            throw new RuntimeException("Invitation already accepted");
+        }
+        else {
+            user.getSubscribedGroups().add(group);
+        }
 
-        groupRepository.save(group);
+        if(group.getSubscribers().contains(user)) {
+            throw new RuntimeException("Invitation already accepted");
+        }else {
+            group.getSubscribers().add(user);
+        }
+
+
+        groupRepository.saveAndFlush(group);
+
+        userRepository.saveAndFlush(user);
 
         notificationService.acceptNotification(notificationId);
     }
@@ -234,9 +248,12 @@ public class GroupService {
         User user = notification.getUser();
         Group group = notification.getGroup();
 
+        user.getSubscribedGroups().remove(group);
         group.getSubscribers().remove(user);
 
-        groupRepository.save(group);
+        groupRepository.saveAndFlush(group);
+
+        userRepository.saveAndFlush(user);
 
         notificationService.cancelNotification(notificationId);
     }

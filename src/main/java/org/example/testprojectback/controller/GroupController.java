@@ -45,13 +45,13 @@ public class GroupController {
                  .build();
     }
 
-    @PostMapping("/groups/{groupId}/add")
-    public ResponseEntity<?> addUserToGroup(@PathVariable Long groupId,
-                                            @RequestParam(name = "login") String userName) {
-        groupService.addUserToGroup(groupId,userName);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/groups/{groupId}/add")
+//    public ResponseEntity<?> addUserToGroup(@PathVariable Long groupId,
+//                                            @RequestParam(name = "login") String userName) {
+//        groupService.addUserToGroup(groupId,userName);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("/groups/{groupID}")
     public GroupDto getGroup(@PathVariable(name = "groupID") Long groupID) {

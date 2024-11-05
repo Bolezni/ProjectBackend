@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping(GET_USER_GROUPS)
-    public Set<GroupDto> getUserGroups(@PathVariable(name = "login") String userName) {
+    public Set<GroupDto> getUserSubscribedGroups(@PathVariable(name = "login") String userName) {
         return userService.getUserSubscribedGroups(userName);
     }
 
@@ -156,6 +156,13 @@ public class UserController {
     public ResponseEntity<?> unSubscribeGroup(@PathVariable(name = "login") String userName,
                                               @RequestParam Long groupId) {
         userService.unSubscribeGroup(userName,groupId);
+
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("api/user/{login}/subscribe")
+    public ResponseEntity<?> subscribeToGroup(@PathVariable(name = "login") String username,
+                                              @RequestParam Long groupId){
+        userService.subscribeToGroup(username,groupId);
 
         return ResponseEntity.ok().build();
     }
