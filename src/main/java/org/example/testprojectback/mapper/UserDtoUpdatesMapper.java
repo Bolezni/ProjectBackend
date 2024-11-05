@@ -17,6 +17,7 @@ public class UserDtoUpdatesMapper{
 
     public UserDtoUpdate toDto(User user) {
         return new UserDtoUpdate(
+                user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),

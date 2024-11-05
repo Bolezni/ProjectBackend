@@ -29,6 +29,14 @@ public class Interest {
     @Builder.Default
     private Set<Group> groups = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "interest_users",
+            joinColumns = @JoinColumn(name = "interest_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> users = new HashSet<>();
+
     public Interest(String name, String color) {
         this.name = name;
         this.color = color;

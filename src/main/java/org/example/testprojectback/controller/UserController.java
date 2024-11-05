@@ -60,15 +60,7 @@ public class UserController {
 
     @GetMapping(GET_USER_GROUPS)
     public Set<GroupDto> getUserGroups(@PathVariable(name = "login") String userName) {
-        Set<Group> groups = userService.getUserByUserName(userName)
-                .map(User::getSubscribedGroups)
-                .orElseThrow(() -> new RuntimeException(
-                        "User not found"
-                ));
-
-        return groups.stream()
-                .map(groupDtoMapper::toDto)
-                .collect(Collectors.toSet());
+        return userService.getUserSubscribedGroups(userName);
     }
 
 
@@ -111,7 +103,8 @@ public class UserController {
                                                 @RequestParam String profileImageId){
         userService.uploadProfileImage(userName,profileImageId);
 
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(HttpStatus.ACCEPTED);
+        // return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(ADD_INTEREST)
@@ -158,4 +151,13 @@ public class UserController {
     public UserDto fetchUserByUserName(@RequestBody String username) {
         return userService.fetchUserByUserName(username);
     }
+
+    @DeleteMapping("api/user/{login}/unsubscribe")
+    public ResponseEntity<?> unSubscribeGroup(@PathVariable(name = "login") String userName,
+                                              @RequestParam Long groupId) {
+        userService.unSubscribeGroup(userName,groupId);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

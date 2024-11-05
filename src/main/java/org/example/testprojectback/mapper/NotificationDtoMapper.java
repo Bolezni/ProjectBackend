@@ -14,6 +14,7 @@ public class NotificationDtoMapper {
 
     public NotificationDto toDto(Notification notification) {
         return new NotificationDto(
+                notification.getId(),
                 userDtoMapper.toDto(notification.getUser()),
                 groupDtoMapper.toDto( notification.getGroup()),
                 notification.getMessage(),

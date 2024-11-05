@@ -2,7 +2,9 @@ package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.UserDtoUpdate;
+import org.example.testprojectback.dto.UserFriendDto;
 import org.example.testprojectback.mapper.UserDtoUpdatesMapper;
+import org.example.testprojectback.mapper.UserFriendDtoMapper;
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.service.FriendShipService;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ public class FriendShipController {
     private static final String GET_FRIENDS = "/search";
     private static final String REQUEST_FRIEND = "/send";
     private static final String REMOVE = "/remove";
+    private final UserFriendDtoMapper userFriendDtoMapper;
 
     @PostMapping(REQUEST_FRIEND)
     public ResponseEntity<Friendship> sendFriendRequest(@RequestParam(name = "login") String userName,
@@ -50,10 +53,10 @@ public class FriendShipController {
     }
 
     @GetMapping(GET_FRIENDS)
-    public List<UserDtoUpdate> getFriends(@RequestParam(name = "login") String userName) {
+    public List<UserFriendDto> getFriends(@RequestParam(name = "login") String userName) {
         return friendShipService.getFriends(userName).
                 stream()
-                .map(userDtoUpdatesMapper::toDto)
+                .map(userFriendDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 

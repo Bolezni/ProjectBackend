@@ -2,7 +2,9 @@ package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.GroupDto;
+import org.example.testprojectback.dto.GroupUpdateDto;
 import org.example.testprojectback.dto.InterestDto;
+import org.example.testprojectback.dto.NotificationDto;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.service.GroupService;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,19 @@ public class GroupController {
                  .build();
     }
 
+    @PostMapping("/groups/{groupId}/add")
+    public ResponseEntity<?> addUserToGroup(@PathVariable Long groupId,
+                                            @RequestParam(name = "login") String userName) {
+        groupService.addUserToGroup(groupId,userName);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/groups/{groupID}")
+    public GroupDto getGroup(@PathVariable(name = "groupID") Long groupID) {
+        return groupService.getGroupById(groupID);
+    }
+
     @PostMapping(ADD_INTEREST_TO_GROUP)
     public void addInterestToGroup(@PathVariable Long groupId,
                                    @RequestBody Set<String> interests) {
@@ -50,10 +65,9 @@ public class GroupController {
     }
 
     @PostMapping(INVITE_USER_TO_GROUP)
-    public ResponseEntity<Void> inviteUserToGroup(@PathVariable Long groupId,
-                                                  @RequestParam(name = "login") String userName) {
-        groupService.addUserToGroup(groupId, userName);
-        return ResponseEntity.ok().build();
+    public NotificationDto inviteUserToGroup(@PathVariable Long groupId,
+                                             @RequestParam(name = "login") String userName) {
+        return groupService.inviteUserToGroup(groupId, userName);
     }
 
     @PostMapping(ACCEPT_INVATION)
@@ -88,6 +102,14 @@ public class GroupController {
     @DeleteMapping(DELETE_GROUP_BY_ID)
     public ResponseEntity<?> deleteGroup(@PathVariable Long groupId) {
         groupService.deleteGroup(groupId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/groups/{groupId}/update")
+    public ResponseEntity<?> updateGroup(@PathVariable Long groupId,
+                                         @RequestBody GroupUpdateDto groupUpdateDto){
+        groupService.updateGroup(groupId,groupUpdateDto);
 
         return ResponseEntity.ok().build();
     }

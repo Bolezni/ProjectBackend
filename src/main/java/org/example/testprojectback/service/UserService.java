@@ -2,11 +2,14 @@ package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.*;
+import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
 import org.example.testprojectback.mapper.UserDtoResponseMapper;
+import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.model.User;
+import org.example.testprojectback.repository.GroupRepository;
 import org.example.testprojectback.repository.InterestRepository;
 import org.example.testprojectback.repository.UserRepository;
 import org.example.testprojectback.sercurity.RefreshTokenDto;
@@ -18,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +38,8 @@ public class UserService {
     private final String UPLOAD_DIR = "uploads/";
     private final InterestDtoMapper interestDtoMapper;
     private final UserDtoResponseMapper userDtoResponseMapper;
+    private final GroupDtoMapper groupDtoMapper;
+    private final GroupRepository groupRepository;
 
     @Transactional
     public void addUser(UserDto userDto) {
@@ -141,8 +143,8 @@ public class UserService {
         user.setFirstName(userDtoUpdate.firstName());
         user.setLastName(userDtoUpdate.lastName());
         user.setPatronymic(userDtoUpdate.patronymic());
-        user.setBirthDay(user.getBirthDay());
-        user.setGender(user.getGender());
+        user.setBirthDay(userDtoUpdate.birthDay());
+        user.setGender(userDtoUpdate.gender());
         user.setDescription(userDtoUpdate.description());
         user.setTgName(userDtoUpdate.tgName());
 
@@ -164,17 +166,19 @@ public class UserService {
     public void addInterestToUser(String userName, String interestName) {
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User  not found"));
 
         Interest interest = interestRepository
                 .findByName(interestName)
                 .orElseThrow(() -> new RuntimeException("Interest not found"));
 
+        if (!user.getInterests().contains(interest)) {
+            user.getInterests().add(interest);
+        } else {
+            System.out.println("Interest already exists for this user.");
+        }
 
-        user.getInterests().add(interest);
-
-
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
     }
 
 
@@ -326,13 +330,14 @@ public class UserService {
                 .findByUsername(userName)
                 .orElseThrow(()-> new RuntimeException("User  not found"));
 
-        if(user.getProfileImageId().equals(profileImageId)){
-            throw new RuntimeException("Profile image already exists");
-        }
-
         if(profileImageId == null || profileImageId.isEmpty()){
             throw new RuntimeException("Profile image id cannot be null or empty");
         }
+
+        if (user.getProfileImageId() != null && user.getProfileImageId().equals(profileImageId)) {
+            throw new RuntimeException("Profile image already exists");
+        }
+
 
         user.setProfileImageId(profileImageId);
 
@@ -353,73 +358,26 @@ public class UserService {
         return false;
     }
 
+    public Set<GroupDto> getUserSubscribedGroups(String userName) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new RuntimeException("User  not found"));
 
-    private String buildEmail(String name, String link) {
-        return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
-                "\n" +
-                "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
-                "\n" +
-                "  <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;min-width:100%;width:100%!important\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"100%\" height=\"53\" bgcolor=\"#0b0c0c\">\n" +
-                "        \n" +
-                "        <table role=\"presentation\" width=\"100%\" style=\"border-collapse:collapse;max-width:580px\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n" +
-                "          <tbody><tr>\n" +
-                "            <td width=\"70\" bgcolor=\"#0b0c0c\" valign=\"middle\">\n" +
-                "                <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td style=\"padding-left:10px\">\n" +
-                "                  \n" +
-                "                    </td>\n" +
-                "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm your email</span>\n" +
-                "                    </td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "              </a>\n" +
-                "            </td>\n" +
-                "          </tr>\n" +
-                "        </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td width=\"10\" height=\"10\" valign=\"middle\"></td>\n" +
-                "      <td>\n" +
-                "        \n" +
-                "                <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\">\n" +
-                "                  <tbody><tr>\n" +
-                "                    <td bgcolor=\"#1D70B8\" width=\"100%\" height=\"10\"></td>\n" +
-                "                  </tr>\n" +
-                "                </tbody></table>\n" +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\" height=\"10\"></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table>\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "  <table role=\"presentation\" class=\"m_-6186904992287805515content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:580px;width:100%!important\" width=\"100%\">\n" +
-                "    <tbody><tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
-                "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
-                "        \n" +
-                "      </td>\n" +
-                "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
-                "    </tr>\n" +
-                "    <tr>\n" +
-                "      <td height=\"30\"><br></td>\n" +
-                "    </tr>\n" +
-                "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
-                "\n" +
-                "</div></div>";
+        return user.getSubscribedGroups().stream()
+                .map(groupDtoMapper::toDto)
+                .collect(Collectors.toSet());
+    }
+
+    public void unSubscribeGroup(String userName, Long groupId) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group  not found"));
+
+        group.getSubscribers().remove(user);
+
+        userRepository.saveAndFlush(user);
+
+        groupRepository.saveAndFlush(group);
     }
 }

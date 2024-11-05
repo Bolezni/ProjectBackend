@@ -64,7 +64,8 @@ public class User{
     @Column(nullable = false)
     private String tgName;
 
-    private String profileImageId;
+    @Builder.Default
+    private String profileImageId = "";
 
     @Transient
     private Integer age;
@@ -88,7 +89,7 @@ public class User{
     @Builder.Default
     private  Set<User> friends = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_group",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -96,7 +97,7 @@ public class User{
     @Builder.Default
     private Set<Group> subscribedGroups = new HashSet<>();
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "user_interest",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,10 +1,10 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.testprojectback.dto.GroupDto;
-import org.example.testprojectback.dto.InterestDto;
-import org.example.testprojectback.dto.UserDto;
+import org.example.testprojectback.dto.*;
 import org.example.testprojectback.mapper.GroupDtoMapper;
+import org.example.testprojectback.mapper.GroupUpdateDtoMapper;
+import org.example.testprojectback.mapper.NotificationDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.model.Notification;
@@ -32,6 +32,8 @@ public class GroupService {
     private final GroupDtoMapper groupDtoMapper;
     private final InterestRepository interestRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationDtoMapper notificationDtoMapper;
+    private final GroupUpdateDtoMapper groupUpdateDtoMapper;
 
     @Transactional
     public void createGroup(String userName, GroupDto groupDto) {
@@ -104,7 +106,7 @@ public class GroupService {
     }
 
     @Transactional
-    public void addUserToGroup(Long groupId, String userName) {
+    public NotificationDto inviteUserToGroup(Long groupId, String userName) {
         Group group = groupRepository
                 .findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
@@ -113,6 +115,20 @@ public class GroupService {
                 .findByUsername(userName)
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
+        Notification notification = notificationService.createNotification(userSave.getUsername(), group.getId(),"");
+
+        return notificationDtoMapper.toDto(notification);
+    }
+
+    @Transactional
+    public void addUserToGroup(Long groupId, String userName) {
+        Group group = groupRepository
+                .findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        User userSave = userRepository
+                .findByUsername(userName)
+                .orElseThrow(()-> new RuntimeException("User not found"));
 
         group.getSubscribers().add(userSave);
 
@@ -212,6 +228,35 @@ public class GroupService {
 
     @Transactional
     public void cancelGroupInvitation(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        User user = notification.getUser();
+        Group group = notification.getGroup();
+
+        group.getSubscribers().remove(user);
+
+        groupRepository.save(group);
+
         notificationService.cancelNotification(notificationId);
+    }
+
+    public GroupDto getGroupById(Long groupID) {
+        Group group = groupRepository.findById(groupID)
+                .orElseThrow(() -> new RuntimeException("Group not exist"));
+
+        return groupDtoMapper.toDto(group);
+    }
+
+    public void updateGroup(Long groupId, GroupUpdateDto groupUpdateDto){
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        group.setName(groupUpdateDto.name());
+        group.setColor(groupUpdateDto.color());
+        group.setDescription(groupUpdateDto.description());
+
+        groupRepository.saveAndFlush(group);
     }
 }
