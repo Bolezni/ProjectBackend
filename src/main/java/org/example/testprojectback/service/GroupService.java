@@ -3,7 +3,6 @@ package org.example.testprojectback.service;
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.*;
 import org.example.testprojectback.mapper.GroupDtoMapper;
-import org.example.testprojectback.mapper.GroupUpdateDtoMapper;
 import org.example.testprojectback.mapper.NotificationDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
@@ -33,7 +32,6 @@ public class GroupService {
     private final InterestRepository interestRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationDtoMapper notificationDtoMapper;
-    private final GroupUpdateDtoMapper groupUpdateDtoMapper;
 
     @Transactional
     public void createGroup(String userName, GroupDto groupDto) {
@@ -71,7 +69,7 @@ public class GroupService {
 
         if(groupDto.subscribers() != null && !groupDto.subscribers().isEmpty()) {
             Set<String> subscriberString = groupDto.subscribers().stream()
-                    .map(UserDto::userName)
+                    .map(UserDto::username)
                     .collect(Collectors.toSet());
 
             Set<User> users = subscriberString
@@ -120,20 +118,20 @@ public class GroupService {
         return notificationDtoMapper.toDto(notification);
     }
 
-    @Transactional
-    public void addUserToGroup(Long groupId, String userName) {
-        Group group = groupRepository
-                .findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
-
-        User userSave = userRepository
-                .findByUsername(userName)
-                .orElseThrow(()-> new RuntimeException("User not found"));
-
-        group.getSubscribers().add(userSave);
-
-        groupRepository.saveAndFlush(group);
-    }
+//    @Transactional
+//    public void addUserToGroup(Long groupId, String userName) {
+//        Group group = groupRepository
+//                .findById(groupId)
+//                .orElseThrow(() -> new RuntimeException("Group not found"));
+//
+//        User userSave = userRepository
+//                .findByUsername(userName)
+//                .orElseThrow(()-> new RuntimeException("User not found"));
+//
+//        group.getSubscribers().add(userSave);
+//
+//        groupRepository.saveAndFlush(group);
+//    }
 
 
     @Transactional

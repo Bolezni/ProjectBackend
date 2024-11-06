@@ -5,9 +5,9 @@ import org.example.testprojectback.model.Gender;
 import java.time.LocalDate;
 
 public record UserDto(
-        String userName,
-        String firstName,
-        String lastName,
+        String username,
+        String firstname,
+        String lastname,
         String patronymic,
         String password,
         String email,

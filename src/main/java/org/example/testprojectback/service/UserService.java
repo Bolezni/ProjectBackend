@@ -2,6 +2,7 @@ package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.*;
+import org.example.testprojectback.email.DefaultEmailService;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
@@ -38,22 +39,21 @@ public class UserService {
     private final JwtService jwtService;
 
 
-    private final String UPLOAD_DIR = "uploads/";
     private final InterestDtoMapper interestDtoMapper;
     private final UserDtoResponseMapper userDtoResponseMapper;
     private final GroupDtoMapper groupDtoMapper;
     private final GroupRepository groupRepository;
+    private final DefaultEmailService defaultEmailService;
 
     @Transactional
     public void addUser(UserDto userDto) {
-        String email = userDto.email();
 
-        if(userRepository.existsByEmail(email)){
+        if(userRepository.existsByEmail(userDto.email())){
             throw new IllegalArgumentException(
                     "email already taken"
             );
         }
-        if(userRepository.existsByUsername(userDto.userName())){
+        if(userRepository.existsByUsername(userDto.username())){
             throw new IllegalArgumentException("username already taken");
         }
 
@@ -62,12 +62,12 @@ public class UserService {
         }
 
         User user = User.builder()
-                .username(userDto.userName())
+                .username(userDto.username())
                 .password(passwordEncoder.encode(userDto.password()))
-                .firstName(userDto.firstName())
-                .lastName(userDto.lastName())
+                .firstName(userDto.firstname())
+                .lastName(userDto.lastname())
                 .patronymic(userDto.patronymic())
-                .email(email)
+                .email(userDto.email())
                 .birthDay(userDto.birthDay())
                 .description(userDto.description())
                 .tgName(userDto.tgName())
@@ -76,11 +76,12 @@ public class UserService {
                 .profileImageId(userDto.profileImageId())
                 .build();
 
-        String activatedCode = UUID.randomUUID().toString();
+        String activatedCode = UUID.randomUUID().toString().replace("-", "").substring(0,6).toUpperCase();
         user.setActivateCode(activatedCode);
 
         userRepository.saveAndFlush(user);
 
+        defaultEmailService.sendConfirmationEmail(userDto.email(), activatedCode);
 
     }
 
@@ -346,7 +347,7 @@ public class UserService {
 
         if(user != null){
             user.setActivated(true);
-            user.setActivateCode("");
+            user.setActivateCode(null);
             userRepository.saveAndFlush(user);
             return true;
         }

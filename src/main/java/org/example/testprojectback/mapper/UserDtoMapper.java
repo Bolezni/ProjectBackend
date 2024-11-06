@@ -27,9 +27,9 @@ public class UserDtoMapper {
 
     public User toEntity(UserDto userDto){
         return new User(
-                userDto.userName(),
-                userDto.firstName(),
-                userDto.lastName(),
+                userDto.username(),
+                userDto.firstname(),
+                userDto.lastname(),
                 userDto.patronymic(),
                 userDto.password(),
                 userDto.email(),
