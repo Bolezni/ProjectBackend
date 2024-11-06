@@ -20,7 +20,8 @@ public class UserDtoResponseMapper {
                 user.getDescription(),
                 user.isAdmin(),
                 user.getAge(),
-                user.getBirthDay()
+                user.getBirthDay(),
+                user.isActivated()
         );
     }
 
@@ -36,6 +37,7 @@ public class UserDtoResponseMapper {
                 .description(dto.description())
                 .age(dto.age())
                 .gender(dto.gender())
+                .isActivated(dto.isActivated())
                 .build();
     }
 }

@@ -22,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,17 +73,18 @@ public class UserService {
                 .profileImageId(userDto.profileImageId())
                 .build();
 
-        String activatedCode = UUID.randomUUID().toString().replace("-", "").substring(0,6).toUpperCase();
+        String activatedCode = generateSecurityCode();
         user.setActivateCode(activatedCode);
 
         userRepository.saveAndFlush(user);
 
         defaultEmailService.sendConfirmationEmail(userDto.email(), activatedCode);
-
     }
 
     public JwtAuthDto singIn(UserCredentialsDto userCredentialsDto) throws AuthenticationException {
         User user = findByCredentials(userCredentialsDto);
+
+
         return jwtService.generateAuthToken(user.getUsername());
     }
 
@@ -114,6 +112,10 @@ public class UserService {
     private User findByUsername(String username) throws Exception {
         return userRepository.findByUsername(username).orElseThrow(()->
                 new Exception(String.format("User with login %s not found", username)));
+    }
+
+    private String generateSecurityCode(){
+        return UUID.randomUUID().toString().replace("-", "").substring(0,6).toUpperCase();
     }
 
     @Transactional
@@ -144,8 +146,8 @@ public class UserService {
             throw new IllegalArgumentException("birthday must be after birthday");
         }
 
-        user.setFirstName(userDtoUpdate.firstName());
-        user.setLastName(userDtoUpdate.lastName());
+        user.setFirstName(userDtoUpdate.firstname());
+        user.setLastName(userDtoUpdate.lastname());
         user.setPatronymic(userDtoUpdate.patronymic());
         user.setBirthDay(userDtoUpdate.birthDay());
         user.setGender(userDtoUpdate.gender());
@@ -154,36 +156,21 @@ public class UserService {
 
         if(userDtoUpdate.interests() != null){
 
-            Set<Interest> interestSet = userDtoUpdate.interests()
+            Set<String> interestNames = userDtoUpdate.interests()
                     .stream()
-                    .map(interestDtoMapper::toEntity)
+                    .map(InterestDto::name)
                     .collect(Collectors.toSet());
 
-            user.getInterests().addAll(interestSet);
+            Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
+
+            user.getInterests().addAll(interests);
         }
 
 
         userRepository.saveAndFlush(user);
     }
 
-    @Transactional
-    public void addInterestToUser(String userName, String interestName) {
-        User user = userRepository
-                .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
 
-        Interest interest = interestRepository
-                .findByName(interestName)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
-
-        if (!user.getInterests().contains(interest)) {
-            user.getInterests().add(interest);
-        } else {
-            System.out.println("Interest already exists for this user.");
-        }
-
-        userRepository.save(user);
-    }
 
 
     @Transactional
@@ -402,5 +389,22 @@ public class UserService {
 
         groupRepository.saveAndFlush(group);
 
+    }
+    @Transactional
+    public void addInterestsToUser(String username, Set<String> interests) {
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        if (interests == null || interests.isEmpty()) {
+            throw new IllegalArgumentException("Members set cannot be null");
+        }
+
+        Set<Interest> interestSet = new HashSet<>(interestRepository.findAllByNameIn(interests));
+
+
+        user.getInterests().addAll(interestSet);
+
+        userRepository.saveAndFlush(user);
     }
 }

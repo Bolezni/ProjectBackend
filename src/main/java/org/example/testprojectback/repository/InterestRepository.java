@@ -12,4 +12,6 @@ public interface InterestRepository extends JpaRepository<Interest, Long> {
     Set<Interest> findAllByNameIn(Set<String> names);
 
     Set<Interest> findByNameIn(Set<String> interestNames);
+
+
 }

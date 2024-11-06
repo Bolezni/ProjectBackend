@@ -6,9 +6,8 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public record UserDtoUpdate (
-        String username,
-        String firstName,
-        String lastName,
+        String firstname,
+        String lastname,
         String patronymic,
         Gender gender,
         String tgName,

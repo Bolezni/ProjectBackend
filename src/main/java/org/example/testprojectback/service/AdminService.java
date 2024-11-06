@@ -7,12 +7,15 @@ import org.example.testprojectback.dto.UserDto;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
-import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.GroupRepository;
 import org.example.testprojectback.repository.InterestRepository;
 import org.example.testprojectback.repository.UserRepository;
+import org.example.testprojectback.repository.intermediate.GroupInterestRepository;
+import org.example.testprojectback.repository.intermediate.GroupUserRepository;
+import org.example.testprojectback.repository.intermediate.UserGroupRepository;
+import org.example.testprojectback.repository.intermediate.UserInterestRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,10 @@ public class AdminService {
     private final InterestDtoMapper interestDtoMapper;
     private final UserDtoMapper userDtoMapper;
     private final GroupDtoMapper groupDtoMapper;
+    private final UserInterestRepository userInterestRepository;
+    private final GroupUserRepository groupUserRepository;
+    private final GroupInterestRepository groupInterestRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Transactional
     public List<UserDto> getAllUsers() {
@@ -71,29 +78,31 @@ public class AdminService {
         groupRepository.findById(groupId)
                         .orElseThrow(() -> new IllegalArgumentException("Group not found"));
 
+        groupUserRepository.removeGroupFromUsers(groupId);
+
+        groupInterestRepository.deleteAllByGroupId(groupId);
+
+        userGroupRepository.deleteAllByGroupId(groupId);
+
         groupRepository.deleteById(groupId);
     }
     @Transactional
     public void deleteInterestByName(String name) {
 
         if(name == null || name.isEmpty()){
-            throw new IllegalArgumentException("Username is null or empty");
+            throw new IllegalArgumentException("Interest name is null or empty");
         }
 
         Interest interest = interestRepository
                 .findByName(name)
                 .orElseThrow(() -> new RuntimeException("Interest not found"));
 
+        groupRepository.removeInterestFromGroups(interest.getId());
+
+        userInterestRepository.deleteByInterestId(interest.getId());
+
         interestRepository.delete(interest);
 
-    }
-    @Transactional
-    public void deleteInterestById(Long interestId) {
-        interestRepository
-                .findById(interestId)
-                .orElseThrow(() -> new IllegalArgumentException("Interest not found"));
-
-        interestRepository.deleteById(interestId);
     }
     @Transactional
     public void deleteUserByUserName(String userName){
@@ -105,7 +114,10 @@ public class AdminService {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        groupRepository.removeUserFromGroups(user.getId());
 
-        userRepository.delete(user);
+        userInterestRepository.deleteByUserId(user.getId());
+
+        userRepository.deleteById(user.getId());
     }
 }

@@ -16,6 +16,7 @@ public record UserDtoResponse(
         String description,
         boolean isAdmin,
         Integer age,
-        LocalDate birthday
+        LocalDate birthday,
+        boolean isActivated
 ) {
 }

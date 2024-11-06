@@ -2,17 +2,13 @@ package org.example.testprojectback.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -50,7 +46,6 @@ public class User{
     private String email;
 
     @Builder.Default
-    @Transient
     private boolean isActivated = false;
 
     private String activateCode;
@@ -74,7 +69,6 @@ public class User{
     private boolean isAdmin = false;
 
     private LocalDate birthDay;
-
 
     @OneToMany(mappedBy = "creator")
     @Builder.Default

@@ -51,7 +51,7 @@ public class AuthenticationController {
         if(isActivated) {
             return ResponseEntity.ok().build();
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }

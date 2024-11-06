@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.UserDtoUpdate;
 import org.example.testprojectback.model.User;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,7 +15,6 @@ public class UserDtoUpdatesMapper{
 
     public UserDtoUpdate toDto(User user) {
         return new UserDtoUpdate(
-                user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),
@@ -35,8 +32,8 @@ public class UserDtoUpdatesMapper{
 
     public User toEntity(UserDtoUpdate dto) {
         return new User(
-                dto.firstName(),
-                dto.lastName(),
+                dto.firstname(),
+                dto.lastname(),
                 dto.patronymic(),
                 dto.gender(),
                 dto.description(),
