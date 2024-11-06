@@ -235,7 +235,7 @@ public class UserService {
         if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
             throw new RuntimeException("Email already exists");
         }
-        if (newPassword == null && newPassword.trim().length() < 6 && !newPassword.isEmpty()) {
+        if (newPassword == null || newPassword.trim().length() < 6) {
             throw new IllegalArgumentException("Password must be at least 6 characters");
         }
 
