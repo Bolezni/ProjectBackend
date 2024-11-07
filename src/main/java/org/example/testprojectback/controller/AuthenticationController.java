@@ -21,8 +21,12 @@ public class AuthenticationController {
 
     private final UserService userService;
 
+    private static final String SING_IN = "/sing-in";
+    private static final String REGISTER = "/register";
+    private static final String REFRESH = "/refresh";
+    private static final String ACTIVATE_CODE = "/activate/{code}";
 
-    @PostMapping("/sing-in")
+    @PostMapping(SING_IN)
     public ResponseEntity<JwtAuthDto> singIn(@RequestBody UserCredentialsDto userCredentialsDto) {
         try {
             JwtAuthDto jwtAuthenticationDto = userService.singIn(userCredentialsDto);
@@ -32,7 +36,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping(REGISTER)
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         userService.addUser(userDto);
         return ResponseEntity.ok()
@@ -40,12 +44,12 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("/refresh")
+    @PostMapping(REFRESH)
     public JwtAuthDto refresh(@RequestBody RefreshTokenDto refreshTokenDto) throws Exception {
         return userService.refreshToken(refreshTokenDto);
     }
 
-    @GetMapping("/activate/{code}")
+    @GetMapping(ACTIVATE_CODE)
     public ResponseEntity<?> activateUser(@PathVariable String code) {
         boolean isActivated =  userService.activateUser(code);
         if(isActivated) {

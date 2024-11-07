@@ -35,6 +35,8 @@ public class UserController {
     private static final String GET_USER_GROUPS = "/api/user/{login}/groups";
     private static final String UPDATE_USER = "/api/user/{login}/update";
     private static final String ADD_INTERESTS_TO_USER = "/api/user/{login}/add/interests";
+    private static final String UNSUBSCRIBE = "/api/user/{login}/unsubscribe";
+    private static final String SUBSCRIBE = "/api/user/{login}/subscribe";
 
 
     @DeleteMapping(DELETE_USER_BY_LOGIN)
@@ -98,7 +100,6 @@ public class UserController {
                                                 @RequestParam String profileImageId){
         userService.uploadProfileImage(userName,profileImageId);
 
-        // return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(HttpStatus.ACCEPTED);
         return ResponseEntity.ok().build();
     }
 
@@ -142,14 +143,14 @@ public class UserController {
         return userService.fetchUserByUserName(username);
     }
 
-    @DeleteMapping("api/user/{login}/unsubscribe")
+    @DeleteMapping(UNSUBSCRIBE)
     public ResponseEntity<?> unSubscribeGroup(@PathVariable(name = "login") String userName,
                                               @RequestParam Long groupId) {
         userService.unSubscribeGroup(userName,groupId);
 
         return ResponseEntity.ok().build();
     }
-    @PostMapping("api/user/{login}/subscribe")
+    @PostMapping(SUBSCRIBE)
     public ResponseEntity<?> subscribeToGroup(@PathVariable(name = "login") String username,
                                               @RequestParam Long groupId){
         userService.subscribeToGroup(username,groupId);

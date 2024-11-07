@@ -1,9 +1,7 @@
 package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.testprojectback.dto.UserDtoUpdate;
 import org.example.testprojectback.dto.UserFriendDto;
-import org.example.testprojectback.mapper.UserDtoUpdatesMapper;
 import org.example.testprojectback.mapper.UserFriendDtoMapper;
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.service.FriendShipService;
@@ -18,16 +16,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FriendShipController {
 
-
+    private final UserFriendDtoMapper userFriendDtoMapper;
     private final FriendShipService friendShipService;
-    private final UserDtoUpdatesMapper userDtoUpdatesMapper;
 
     private static final String ACCEPT_FRIEND = "/accept";
     private static final String DECLINE_FRIEND = "/decline";
     private static final String GET_FRIENDS = "/search";
     private static final String REQUEST_FRIEND = "/send";
     private static final String REMOVE = "/remove";
-    private final UserFriendDtoMapper userFriendDtoMapper;
+
 
     @PostMapping(REQUEST_FRIEND)
     public ResponseEntity<Friendship> sendFriendRequest(@RequestParam(name = "login") String userName,

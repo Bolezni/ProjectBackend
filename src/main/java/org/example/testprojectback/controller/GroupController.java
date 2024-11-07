@@ -19,6 +19,7 @@ import java.util.Set;
 public class GroupController {
 
     private final GroupService groupService;
+    private final NotificationService notificationService;
 
     private static final String CREATE_GROUP = "/groups/{login}/create";
     private static final String ADD_INTEREST_TO_GROUP = "/groups/{groupId}/interests";
@@ -28,7 +29,7 @@ public class GroupController {
     private static final String DELETE_GROUP_BY_ID = "/groups/{groupId}";
     private static final String ACCEPT_INVATION = "/groups/notifications/accept";
     private static final String CANCEL_INVATION = "/groups/notifications/cancel";
-    private final NotificationService notificationService;
+
 
 
     @GetMapping("/groups")
@@ -44,14 +45,6 @@ public class GroupController {
          return ResponseEntity.ok()
                  .build();
     }
-
-//    @PostMapping("/groups/{groupId}/add")
-//    public ResponseEntity<?> addUserToGroup(@PathVariable Long groupId,
-//                                            @RequestParam(name = "login") String userName) {
-//        groupService.addUserToGroup(groupId,userName);
-//
-//        return ResponseEntity.ok().build();
-//    }
 
     @GetMapping("/groups/{groupID}")
     public GroupDto getGroup(@PathVariable(name = "groupID") Long groupID) {

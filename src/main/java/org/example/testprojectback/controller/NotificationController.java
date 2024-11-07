@@ -15,14 +15,17 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+    private static final String ACCEPT = "/accept";
+    private static final String CANCEL = "/cancel";
+    private static final String GET_BY_ID = "/{id}";
 
-    @PostMapping("/accept")
+    @PostMapping(ACCEPT)
     public ResponseEntity<?> acceptInvitation(@RequestParam Long notificationId) {
         notificationService.acceptNotification(notificationId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/cancel")
+    @PostMapping(CANCEL)
     public ResponseEntity<?> cancelInvitation(@RequestParam Long notificationId) {
         notificationService.cancelNotification(notificationId);
         return ResponseEntity.ok().build();
@@ -35,7 +38,7 @@ public class NotificationController {
         return ResponseEntity.ok().body(list);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(GET_BY_ID)
     public NotificationDto getNotificationById(@PathVariable(name = "id") Long notificationId) {
         return notificationService.getInvitation(notificationId);
     }
