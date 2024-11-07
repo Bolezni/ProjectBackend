@@ -108,7 +108,6 @@ public class GroupService {
     }
 
 
-    @Transactional
     public List<GroupDto> fetchGroupsByName(Optional<String> optionalPrefixName) {
         if (optionalPrefixName.isPresent() && !optionalPrefixName.get().isEmpty()) {
 
@@ -124,7 +123,8 @@ public class GroupService {
         }
 
     }
-    @Transactional
+
+
     public List<GroupDto> fetchGroupsByInterest(Set<InterestDto> interests) {
         if (interests == null || interests.isEmpty()) {
             return Collections.emptyList();
@@ -157,6 +157,7 @@ public class GroupService {
         return groupDtoMapper.toDto(group);
     }
 
+    @Transactional
     public void updateGroup(Long groupId, GroupUpdateDto groupUpdateDto){
 
         Group group = groupRepository.findById(groupId)

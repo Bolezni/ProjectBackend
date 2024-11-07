@@ -248,7 +248,7 @@ public class UserService {
         userRepository.saveAndFlush(user);
     }
 
-    @Transactional
+
     public Set<InterestDto> getInterests(String userName) {
         User user = userRepository
                 .findByUsername(userName)
@@ -309,7 +309,7 @@ public class UserService {
         }
     }
 
-
+    @Transactional
     public void uploadProfileImage(String userName, String profileImageId) {
         User user = userRepository
                 .findByUsername(userName)

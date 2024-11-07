@@ -115,6 +115,7 @@ public class NotificationService {
         return notificationDtoMapper.toDto(notification);
     }
 
+    @Transactional
     public List<NotificationDto> getAllNotificationsByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

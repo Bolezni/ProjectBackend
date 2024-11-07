@@ -29,10 +29,13 @@ public class GroupController {
     private static final String DELETE_GROUP_BY_ID = "/groups/{groupId}";
     private static final String ACCEPT_INVATION = "/groups/notifications/accept";
     private static final String CANCEL_INVATION = "/groups/notifications/cancel";
+    private static final String UPDATE_GROUP = "/groups/{groupId}/update";
+    private static final String GET_ALL_GROUPS = "/groups";
+    private static final String GET_GROUP_BY_ID = "/groups/{groupID}";
 
 
 
-    @GetMapping("/groups")
+    @GetMapping(GET_ALL_GROUPS)
     public List<GroupDto> getAllGroups() {
         return groupService.getAllGroups();
     }
@@ -46,7 +49,7 @@ public class GroupController {
                  .build();
     }
 
-    @GetMapping("/groups/{groupID}")
+    @GetMapping(GET_GROUP_BY_ID)
     public GroupDto getGroup(@PathVariable(name = "groupID") Long groupID) {
         return groupService.getGroupById(groupID);
     }
@@ -95,7 +98,7 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/groups/{groupId}/update")
+    @PutMapping(UPDATE_GROUP)
     public ResponseEntity<?> updateGroup(@PathVariable Long groupId,
                                          @RequestBody GroupUpdateDto groupUpdateDto){
         groupService.updateGroup(groupId,groupUpdateDto);
