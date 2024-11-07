@@ -5,8 +5,8 @@ import org.example.testprojectback.dto.GroupDto;
 import org.example.testprojectback.dto.GroupUpdateDto;
 import org.example.testprojectback.dto.InterestDto;
 import org.example.testprojectback.dto.NotificationDto;
-import org.example.testprojectback.model.User;
 import org.example.testprojectback.service.GroupService;
+import org.example.testprojectback.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +23,12 @@ public class GroupController {
     private static final String CREATE_GROUP = "/groups/{login}/create";
     private static final String ADD_INTEREST_TO_GROUP = "/groups/{groupId}/interests";
     private static final String INVITE_USER_TO_GROUP = "/groups/{groupId}/users";
-    private static final String ADD_USERS_TO_GROUPS = "/groups/{groupId}/users/add";
     private static final String FETCH_GROUP_BY_PREFIX_NAME = "/groups/search_name";
     private static final String FETCH_GROUPS_BY_INTEREST = "/groups/search_interest";
     private static final String DELETE_GROUP_BY_ID = "/groups/{groupId}";
     private static final String ACCEPT_INVATION = "/groups/notifications/accept";
     private static final String CANCEL_INVATION = "/groups/notifications/cancel";
+    private final NotificationService notificationService;
 
 
     @GetMapping("/groups")
@@ -66,27 +66,23 @@ public class GroupController {
 
     @PostMapping(INVITE_USER_TO_GROUP)
     public NotificationDto inviteUserToGroup(@PathVariable Long groupId,
-                                             @RequestParam(name = "login") String userName) {
-        return groupService.inviteUserToGroup(groupId, userName);
+                                             @RequestParam(name = "from_username") String fromUserName,
+                                             @RequestParam(name = "to_username") String toUserName) {
+        return notificationService.createNotification(fromUserName, toUserName, groupId);
     }
 
     @PostMapping(ACCEPT_INVATION)
     public ResponseEntity<?> acceptInvitation(@RequestParam Long notificationId) {
-        groupService.acceptGroupInvitation(notificationId);
+        notificationService.acceptNotification(notificationId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(CANCEL_INVATION)
     public ResponseEntity<?> cancelInvitation(@RequestParam Long notificationId) {
-        groupService.cancelGroupInvitation(notificationId);
+        notificationService.cancelNotification(notificationId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(ADD_USERS_TO_GROUPS)
-    public void addUsersToGroup(@PathVariable Long groupId,
-                                @RequestBody Set<User> users){
-        groupService.addUsersToGroup(groupId,users);
-    }
 
     @GetMapping(FETCH_GROUP_BY_PREFIX_NAME)
     public List<GroupDto> fetchGroupsByName(@RequestParam(value = "prefix_name",required = false)

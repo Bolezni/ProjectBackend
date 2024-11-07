@@ -12,6 +12,7 @@ import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.GroupRepository;
 import org.example.testprojectback.repository.InterestRepository;
+import org.example.testprojectback.repository.NotificationRepository;
 import org.example.testprojectback.repository.UserRepository;
 import org.example.testprojectback.sercurity.RefreshTokenDto;
 import org.example.testprojectback.sercurity.jwt.JwtAuthDto;
@@ -41,6 +42,7 @@ public class UserService {
     private final GroupDtoMapper groupDtoMapper;
     private final GroupRepository groupRepository;
     private final DefaultEmailService defaultEmailService;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public void addUser(UserDto userDto) {
@@ -359,11 +361,16 @@ public class UserService {
 
         group.getSubscribers().remove(user);
 
+        user.getSubscribedGroups().remove(group);
+
+        notificationRepository.deleteNotificationsByUserIdAndGroup(user.getId(), group.getId());
+
         userRepository.saveAndFlush(user);
 
         groupRepository.saveAndFlush(group);
     }
 
+    @Transactional
     public void subscribeToGroup(String username, Long groupId) {
 
         User user = userRepository.findByUsername(username)

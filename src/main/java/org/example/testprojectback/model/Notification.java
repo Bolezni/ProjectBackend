@@ -18,23 +18,17 @@ public class Notification {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "inviter_id")
+    private User inviter;
 
     @ManyToOne
-    private Group group;
+    @JoinColumn(name = "invitee_id")
+    private User invitee;
 
-    private String message;
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Builder.Default
-    private boolean accepted = false;
-
-    public Notification(User user, Group group, String message) {
-        this.user = user;
-        this.group = group;
-        this.message = message;
-    }
 }

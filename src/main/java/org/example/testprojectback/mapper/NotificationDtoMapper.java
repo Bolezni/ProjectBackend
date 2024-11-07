@@ -15,18 +15,20 @@ public class NotificationDtoMapper {
     public NotificationDto toDto(Notification notification) {
         return new NotificationDto(
                 notification.getId(),
-                userDtoMapper.toDto(notification.getUser()),
+                userDtoMapper.toDto(notification.getInviter()),
+                userDtoMapper.toDto(notification.getInvitee()),
                 groupDtoMapper.toDto( notification.getGroup()),
-                notification.getMessage(),
                 notification.getCreatedAt()
         );
     }
 
     public Notification toEntity(NotificationDto notificationDto) {
-        return  new Notification(
-                userDtoMapper.toEntity(notificationDto.user()),
-                groupDtoMapper.toEntity(notificationDto.group()),
-                notificationDto.message()
-        );
+        return  Notification.builder()
+                .invitee(userDtoMapper.toEntity(notificationDto.invitee()))
+                .inviter(userDtoMapper.toEntity(notificationDto.inviter()))
+                .group(groupDtoMapper.toEntity(notificationDto.group()))
+                .id(notificationDto.id())
+                .createdAt(notificationDto.createdAt())
+                .build();
     }
 }

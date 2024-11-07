@@ -54,6 +54,7 @@ public class User{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column(length = 600)
     private String description;
 
     @Column(nullable = false)
