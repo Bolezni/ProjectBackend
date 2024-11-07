@@ -13,5 +13,5 @@ public interface InterestRepository extends JpaRepository<Interest, Long> {
 
     Set<Interest> findByNameIn(Set<String> interestNames);
 
-
+    long count();
 }
