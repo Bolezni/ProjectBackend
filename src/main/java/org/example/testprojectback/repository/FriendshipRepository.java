@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findByUser (User user);
     Optional<Friendship> findByUserAndFriend (User user, User friend);
+
+    boolean existsByUserAndFriend (User user, User friend);
+    boolean existsByFriendAndUser (User friend, User user);
 }

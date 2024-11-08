@@ -1,6 +1,8 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.testprojectback.dto.FriendShipDto;
+import org.example.testprojectback.mapper.FriendShipDtoMapper;
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.FriendshipRepository;
@@ -19,6 +21,7 @@ public class FriendShipService {
     private final FriendshipRepository friendshipRepository;
 
     private final UserRepository userRepository;
+    private final FriendShipDtoMapper friendShipDtoMapper;
 
 
     @Transactional
@@ -35,7 +38,7 @@ public class FriendShipService {
 
 
     @Transactional
-    public void sendFriendRequest(String userName, String friendName) {
+    public FriendShipDto sendFriendRequest(String userName, String friendName) {
 
         if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
@@ -50,18 +53,23 @@ public class FriendShipService {
         User friend = userRepository.findByUsername(friendName)
                 .orElseThrow(() -> new RuntimeException("Friend not found"));
 
+        if (friendshipRepository.existsByUserAndFriend(user, friend)) {
+            throw new RuntimeException("Friend request already exists");
+        }
+
         Friendship friendship = Friendship.builder()
                 .user(user)
                 .friend(friend)
                 .status("PENDING")
                 .build();
 
-        friendshipRepository.save(friendship);
+        friendship = friendshipRepository.save(friendship);
+        return friendShipDtoMapper.toDto(friendship);
     }
 
 
     @Transactional
-    public void acceptFriendRequest(String userName, String friendName) {
+    public FriendShipDto acceptFriendRequest(String userName, String friendName) {
 
         if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
@@ -90,12 +98,15 @@ public class FriendShipService {
                     .status("ACCEPTED")
                     .build();
 
-            friendshipRepository.save(reverseFriendship);
+            reverseFriendship = friendshipRepository.save(reverseFriendship);
+            return friendShipDtoMapper.toDto(reverseFriendship);
+        } else {
+            throw new RuntimeException("Friend request is not in PENDING status");
         }
     }
 
     @Transactional
-    public void declineFriendRequest(String userName, String friendName) {
+    public FriendShipDto declineFriendRequest(String userName, String friendName) {
         if (userName.isEmpty() || friendName.isEmpty()) {
             throw new RuntimeException("Username or Friend name cannot be empty");
         }
@@ -115,9 +126,15 @@ public class FriendShipService {
         if (friendship.getStatus().equals("PENDING")) {
             friendship.setStatus("DECLINED");
             friendship.setUpdatedAt(LocalDateTime.now());
-            friendshipRepository.save(friendship);
+            friendship = friendshipRepository.save(friendship);
+
+            return friendShipDtoMapper.toDto(friendship);
+        }else {
+            throw new RuntimeException("Friend request is not in PENDING status");
         }
     }
+
+
     @Transactional
     public void removeFriend(String userName, String friendName) {
         if (userName.isEmpty() || friendName.isEmpty()) {
@@ -145,4 +162,15 @@ public class FriendShipService {
     }
 
 
+    public boolean areFriends(String userName1, String userName2) {
+
+        User user1 = userRepository.findByUsername(userName1)
+                .orElseThrow(() -> new RuntimeException("User  1 not found"));
+
+        User user2 = userRepository.findByUsername(userName2)
+                .orElseThrow(() -> new RuntimeException("User  2 not found"));
+
+        return friendshipRepository.existsByUserAndFriend(user1, user2) ||
+        friendshipRepository.existsByFriendAndUser(user2, user1);
+    }
 }

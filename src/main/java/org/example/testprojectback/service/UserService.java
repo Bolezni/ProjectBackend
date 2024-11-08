@@ -142,10 +142,13 @@ public class UserService {
                 .findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User already exist"));
 
-        if(userDtoUpdate.birthDay() != null &&
-                !userDtoUpdate.birthDay().isAfter(LocalDate.of(1970, 1,1)) &&
-                !userDtoUpdate.birthDay().isBefore(LocalDate.now()) ){
-            throw new IllegalArgumentException("birthday must be after birthday");
+        if (userDtoUpdate.birthDay() != null) {
+            if (userDtoUpdate.birthDay().isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("birthDay must be in the past");
+            }
+            if (userDtoUpdate.birthDay().isBefore(LocalDate.of(1970, 1, 1))) {
+                throw new IllegalArgumentException("birthDay must be after 1970-01-01");
+            }
         }
 
         user.setFirstName(userDtoUpdate.firstname());
@@ -165,15 +168,22 @@ public class UserService {
 
             Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
 
-            user.getInterests().addAll(interests);
+            if (interests.size() != interestNames.size()) {
+                throw new IllegalArgumentException("Some interests are not found in the database");
+            }
+
+            Set<Interest> currentInterests = user.getInterests();
+            Set<Interest> interestsToRemove = new HashSet<>(currentInterests);
+            interestsToRemove.removeAll(interests);
+
+            Set<Interest> interestsToAdd = new HashSet<>(interests);
+            interestsToAdd.removeAll(currentInterests);
+
+            currentInterests.removeAll(interestsToRemove);
+            currentInterests.addAll(interestsToAdd);
         }
-
-
         userRepository.saveAndFlush(user);
     }
-
-
-
 
     @Transactional
     public void removeInterestsFromUser(String userName, Set<InterestDto> interests) {

@@ -167,6 +167,29 @@ public class GroupService {
         group.setColor(groupUpdateDto.color());
         group.setDescription(groupUpdateDto.description());
 
+        if (groupUpdateDto.interests() != null) {
+            Set<String> interestNames = groupUpdateDto.interests()
+                    .stream()
+                    .map(InterestDto::name)
+                    .collect(Collectors.toSet());
+
+            Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
+
+            if (interests.size() != interestNames.size()) {
+                throw new IllegalArgumentException("Some interests are not found in the database");
+            }
+
+            Set<Interest> currentInterests = group.getInterests();
+            Set<Interest> interestsToRemove = new HashSet<>(currentInterests);
+            interestsToRemove.removeAll(interests);
+
+            Set<Interest> interestsToAdd = new HashSet<>(interests);
+            interestsToAdd.removeAll(currentInterests);
+
+            currentInterests.removeAll(interestsToRemove);
+            currentInterests.addAll(interestsToAdd);
+        }
+
         groupRepository.saveAndFlush(group);
     }
 }

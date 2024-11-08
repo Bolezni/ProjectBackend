@@ -13,6 +13,7 @@ public class FriendShipDtoMapper {
 
     public FriendShipDto toDto(Friendship friendship) {
         return new FriendShipDto(
+                friendship.getId(),
                 userDtoMapper.toDto(friendship.getUser()),
                 userDtoMapper.toDto(friendship.getFriend()),
                 friendship.getStatus(),
@@ -22,12 +23,13 @@ public class FriendShipDtoMapper {
     }
 
     public Friendship toEntity(FriendShipDto friendShipDto) {
-        return new Friendship(
-                userDtoMapper.toEntity(friendShipDto.user()),
-                userDtoMapper.toEntity(friendShipDto.friend()),
-                friendShipDto.status(),
-                friendShipDto.createdAt(),
-                friendShipDto.updatedAt()
-        );
+        return  Friendship.builder()
+                .id(friendShipDto.id())
+                .user(userDtoMapper.toEntity(friendShipDto.user()))
+                .friend(userDtoMapper.toEntity(friendShipDto.friend()))
+                .status(friendShipDto.status())
+                .createdAt(friendShipDto.createdAt())
+                .updatedAt(friendShipDto.updatedAt())
+                .build();
     }
 }
