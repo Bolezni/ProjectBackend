@@ -29,7 +29,7 @@ public class FriendShipService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Friendship> friendships = friendshipRepository.findByUser(user);
+        List<Friendship> friendships = friendshipRepository.findByUserAndStatus(user,"ACCEPTED");
 
         return friendships.stream()
                 .map(Friendship::getFriend)
@@ -54,11 +54,8 @@ public class FriendShipService {
         User friend = userRepository.findByUsername(friendName)
                 .orElseThrow(() -> new RuntimeException("Friend not found"));
 
-        if (friendshipRepository.existsByUserAndFriendAndStatusPending(user, friend)) {
-            throw new RuntimeException("Friend request already exists");
-        }
-
-        if(friendshipRepository.existsByFriendAndUser(friend, user)) {
+        if (friendshipRepository.existsByUserAndFriendAndStatusPending(user, friend) ||
+                friendshipRepository.existsByUserAndFriendAndStatusPending(friend, user)) {
             throw new RuntimeException("Friend request already exists");
         }
 

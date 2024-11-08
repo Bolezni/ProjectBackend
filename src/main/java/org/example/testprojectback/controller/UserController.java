@@ -131,13 +131,13 @@ public class UserController {
         userService.addInterestsToUser(username, interests);
     }
 
-    @GetMapping(FETCH_USER_BY_INTERESTS)
+    @PostMapping(FETCH_USER_BY_INTERESTS)
     public List<UserDto> fetchUserByInterest(@RequestBody Set<InterestDto> interests){
         return userService.fetchUserByInterest(interests);
     }
 
     @GetMapping(FETCH_USER_BY_USERNAME)
-    public UserDto fetchUserByUserName(@RequestBody String username) {
+    public UserDto fetchUserByUserName(@RequestParam String username) {
         return userService.fetchUserByUserName(username);
     }
 

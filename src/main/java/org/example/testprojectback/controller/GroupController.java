@@ -86,7 +86,7 @@ public class GroupController {
        return groupService.fetchGroupsByName(optionalPrefixName);
     }
 
-    @GetMapping(FETCH_GROUPS_BY_INTEREST)
+    @PostMapping(FETCH_GROUPS_BY_INTEREST)
     public List<GroupDto> fetchGroupsByInterest(@RequestBody Set<InterestDto> interests) {
         return groupService.fetchGroupsByInterest(interests);
     }
