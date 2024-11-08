@@ -238,22 +238,27 @@ public class UserService {
                 .findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User  not found"));
 
-        validateUsername(newUserName);
-        if (!user.getUsername().equals(newUserName) && userRepository.existsByUsername(newUserName)) {
-            throw new RuntimeException("Username already exists");
+        if (newUserName != null && !newUserName.trim().isEmpty()) {
+            validateUsername(newUserName);
+            if (!user.getUsername().equals(newUserName) && userRepository.existsByUsername(newUserName)) {
+                throw new RuntimeException("Username already exists");
+            }
+            user.setUsername(newUserName);
         }
 
-        validateEmail(newEmail);
-        if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
-            throw new RuntimeException("Email already exists");
+        if (newEmail != null && !newEmail.trim().isEmpty()) {
+            validateEmail(newEmail);
+            if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
+                throw new RuntimeException("Email already exists");
+            }
+            user.setEmail(newEmail);
         }
-        if (newPassword == null || newPassword.trim().length() < 6) {
+
+        if (newPassword != null && newPassword.trim().length() >= 6) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+        } else if (newPassword != null) {
             throw new IllegalArgumentException("Password must be at least 6 characters");
         }
-
-        user.setUsername(newUserName);
-        user.setEmail(newEmail);
-        user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.saveAndFlush(user);
     }

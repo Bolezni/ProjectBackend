@@ -107,7 +107,6 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
-
     public List<GroupDto> fetchGroupsByName(Optional<String> optionalPrefixName) {
         if (optionalPrefixName.isPresent() && !optionalPrefixName.get().isEmpty()) {
 
@@ -121,10 +120,7 @@ public class GroupService {
                     .map(groupDtoMapper::toDto)
                     .collect(Collectors.toList());
         }
-
     }
-
-
     public List<GroupDto> fetchGroupsByInterest(Set<InterestDto> interests) {
         if (interests == null || interests.isEmpty()) {
             return Collections.emptyList();

@@ -2,7 +2,9 @@ package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.NotificationDto;
+import org.example.testprojectback.dto.UserDto;
 import org.example.testprojectback.mapper.NotificationDtoMapper;
+import org.example.testprojectback.mapper.UserDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Notification;
 import org.example.testprojectback.model.User;
@@ -23,6 +25,7 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final NotificationDtoMapper notificationDtoMapper;
+    private final UserDtoMapper userDtoMapper;
 
     @Transactional
     public NotificationDto createNotification(String fromUsername,String toUsername , Long groupId) {
@@ -124,6 +127,23 @@ public class NotificationService {
 
         return list.stream()
                 .map(notificationDtoMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<UserDto> getAvailableUsersForInvitation(Long groupId, String username) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Long groupIdCreator = group.getCreator().getId();
+
+        List<User> availableUsers = userRepository.findAvailableUsersForInvitation(groupId,user.getId(),groupIdCreator);
+
+        return availableUsers.stream()
+                .map(userDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

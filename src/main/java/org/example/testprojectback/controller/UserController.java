@@ -60,7 +60,6 @@ public class UserController {
         return userService.getUserSubscribedGroups(userName);
     }
 
-
     @GetMapping(GET_USER_CREATED_GROUPS)
     public Set<GroupDto> getUserCreatedGroups(@PathVariable(name = "login") String userName) {
         Set<Group> groups = userService.getUserByUserName(userName)
@@ -88,7 +87,6 @@ public class UserController {
                                                     @RequestParam(name = "new_login") String newUserName,
                                                     @RequestParam(name = "password") String newPassword,
                                                     @RequestParam(name = "email") String newEmail){
-
         userService.updateSecurityUserData(userName,newUserName,newPassword,newEmail);
 
         return ResponseEntity.ok()

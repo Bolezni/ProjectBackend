@@ -26,6 +26,7 @@ public class FriendShipController {
     private static final String REQUEST_FRIEND = "/send";
     private static final String REMOVE = "/remove";
     private static final String IS_FRIEND = "/isFriend";
+    private static final String INCOMING_FRIEND = "/incoming-requests";
 
 
     @PostMapping(REQUEST_FRIEND)
@@ -71,6 +72,12 @@ public class FriendShipController {
         }else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Friend is not accepted.");
         }
+    }
+
+    @GetMapping(INCOMING_FRIEND)
+    public ResponseEntity<List<FriendShipDto>> getIncomingFriendRequests(@RequestParam(name = "login") String userName) {
+        List<FriendShipDto> requests = friendShipService.getIncomingFriendRequests(userName);
+        return ResponseEntity.ok(requests);
     }
 
 
