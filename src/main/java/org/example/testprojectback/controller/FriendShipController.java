@@ -44,7 +44,7 @@ public class FriendShipController {
 
     @PostMapping(DECLINE_FRIEND)
     public FriendShipDto declineFriendRequest(@RequestParam(name = "login") String userName,
-                                          @RequestParam(name = "friendLogin") String friendName) {
+                                              @RequestParam(name = "friendLogin") String friendName) {
         return friendShipService.declineFriendRequest(userName, friendName);
     }
 

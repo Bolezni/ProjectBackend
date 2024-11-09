@@ -338,7 +338,6 @@ public class UserService {
             throw new RuntimeException("Profile image already exists");
         }
 
-
         user.setProfileImageId(profileImageId);
 
         userRepository.saveAndFlush(user);
