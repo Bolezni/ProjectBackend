@@ -46,6 +46,6 @@ cd ProjectBackend</code></pre>
 
 <h2>Fronted</h2>
 
-<p><strong> https://github.com/IcQxp/school21_-Tech </strong></p>
+<p>https://github.com/IcQxp/school21_-Tech</p>
 
 </body>
