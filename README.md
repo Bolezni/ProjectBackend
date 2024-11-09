@@ -44,21 +44,4 @@ cd ProjectBackend</code></pre>
     </li>
 </ol>
 
-<h2>📖 API Documentation</h2>
-<p>After startup, Swagger documentation is available at:</p>
-<ul>
-    <li><strong>Swagger UI</strong>: <a href="http://localhost:8080/swagger-ui.html">http://localhost:8080/swagger-ui.html</a></li>
-</ul>
-
-<h2>⚙️ Testing</h2>
-<p>Run tests with:</p>
-<pre><code>mvn test</code></pre>
-
-<h2>🤝 Contributing</h2>
-<ol>
-    <li>Fork the project</li>
-    <li>Create a feature branch</li>
-    <li>Commit your changes</li>
-    <li>Open a Pull Request</li>
-</ol>
 </body>
