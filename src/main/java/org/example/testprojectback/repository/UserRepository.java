@@ -21,4 +21,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id != :currentUserId AND u.id != :groupCreatorId AND u NOT IN (SELECT n.invitee FROM Notification n WHERE n.group.id = :groupId) AND u NOT IN (SELECT g.subscribers FROM Group g WHERE g.id = :groupId)")
     List<User> findAvailableUsersForInvitation(@Param("groupId") Long groupId, @Param("currentUserId") Long currentUserId, @Param("groupCreatorId") Long groupCreatorId);
 
+
+    @Query("SELECT u FROM User u " +
+            "WHERE (:firstName IS NULL OR LOWER(u.firstName) LIKE LOWER(CONCAT(:firstName, '%'))) " +
+            "AND (:lastName IS NULL OR LOWER(u.lastName) LIKE LOWER(CONCAT(:lastName, '%'))) " +
+            "AND (:patronymic IS NULL OR LOWER(u.patronymic) LIKE LOWER(CONCAT(:patronymic, '%')))")
+    List<User> findUsersByFullName(@Param("firstName") String firstName,
+                                   @Param("lastName") String lastName,
+                                   @Param("patronymic") String patronymic);
 }

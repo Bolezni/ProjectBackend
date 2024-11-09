@@ -125,6 +125,11 @@ public class UserController {
         return userService.fetchUserByFullName(firstName,lastName,patronymic);
     }
 
+    @PostMapping(FETCH_USER_BY_FULLNAME)
+    public List<UserDto> fetchUserByFullName(@RequestBody UserFetchDto userFetchDto) {
+        return userService.fetchUserByFullName(userFetchDto);
+    }
+
     @PostMapping(ADD_INTERESTS_TO_USER)
     public void addInterestsToUser(@PathVariable(name = "login") String username,
                                    @RequestBody Set<String> interests) {

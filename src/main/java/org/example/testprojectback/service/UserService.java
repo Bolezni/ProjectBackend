@@ -287,6 +287,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<UserDto> fetchUserByFullName(UserFetchDto userFetchDto) {
+        List<User> users = userRepository.findUsersByFullName(userFetchDto.firstName(), userFetchDto.lastName(), userFetchDto.patronymic());
+
+        return users.stream()
+                .map(userDtoMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     public List<UserDto> fetchUserByInterest(Set<InterestDto> interests) {
         if (interests == null || interests.isEmpty()) {
             return List.of();
