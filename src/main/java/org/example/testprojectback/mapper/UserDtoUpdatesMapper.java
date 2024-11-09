@@ -31,14 +31,14 @@ public class UserDtoUpdatesMapper{
     }
 
     public User toEntity(UserDtoUpdate dto) {
-        return new User(
-                dto.firstname(),
-                dto.lastname(),
-                dto.patronymic(),
-                dto.gender(),
-                dto.description(),
-                dto.tgName(),
-                dto.birthDay()
-        );
+        return User.builder()
+                .firstName(dto.firstname())
+                .lastName(dto.lastname())
+                .patronymic(dto.patronymic())
+                .gender(dto.gender())
+                .tgName(dto.tgName())
+                .description(dto.description())
+                .birthDay(dto.birthDay())
+                .build();
     }
 }

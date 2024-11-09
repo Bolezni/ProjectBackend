@@ -20,24 +20,26 @@ public class UserDtoMapper {
                 user.getProfileImageId(),
                 user.getAge(),
                 user.isAdmin(),
+                user.isActivated(),
                 user.getBirthDay()
         );
     }
 
 
     public User toEntity(UserDto userDto){
-        return new User(
-                userDto.username(),
-                userDto.firstname(),
-                userDto.lastname(),
-                userDto.patronymic(),
-                userDto.password(),
-                userDto.email(),
-                userDto.gender(),
-                userDto.description(),
-                userDto.tgName(),
-                userDto.profileImageId(),
-                userDto.birthDay()
-        );
+        return User.builder()
+                .username(userDto.username())
+                .firstName(userDto.firstname())
+                .lastName(userDto.lastname())
+                .patronymic(userDto.patronymic())
+                .password(userDto.password())
+                .email(userDto.email())
+                .gender(userDto.gender())
+                .tgName(userDto.tgName())
+                .description(userDto.description())
+                .profileImageId(userDto.profileImageId())
+                .birthDay(userDto.birthDay())
+                .isActivated(userDto.activeCode())
+                .build();
     }
 }

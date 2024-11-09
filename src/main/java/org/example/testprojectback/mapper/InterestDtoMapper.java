@@ -16,10 +16,10 @@ public class InterestDtoMapper {
 
 
     public Interest toEntity(InterestDto interestDto){
-        return new Interest(
-                interestDto.name(),
-                interestDto.color()
-        );
+        return Interest.builder()
+                .name(interestDto.name())
+                .color(interestDto.color())
+                .build();
     }
 
 

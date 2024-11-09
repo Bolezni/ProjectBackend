@@ -42,4 +42,8 @@ public record CustomUserDetails (User user) implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    public User getUser() {
+        return user;
+    }
 }

@@ -16,6 +16,7 @@ public record UserDto(
         String description,
         String profileImageId,
         Integer age,
+        boolean activeCode,
         boolean isAdmin,
         LocalDate birthDay
 ) {

@@ -32,13 +32,13 @@ public class GroupDtoMapper  {
     }
 
     public Group toEntity(GroupDto groupDto) {
-        return new Group(
-                groupDto.id(),
-                groupDto.chars(),
-                groupDto.name(),
-                groupDto.color(),
-                groupDto.description(),
-                userDtoMapper.toEntity(groupDto.creator())
-        );
+        return Group.builder()
+                .id(groupDto.id())
+                .chars(groupDto.chars())
+                .name(groupDto.name())
+                .color(groupDto.color())
+                .description(groupDto.description())
+                .creator(userDtoMapper.toEntity(groupDto.creator()))
+                .build();
     }
 }
