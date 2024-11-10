@@ -159,6 +159,7 @@ public class GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
+        group.setChars(groupUpdateDto.chars());
         group.setName(groupUpdateDto.name());
         group.setColor(groupUpdateDto.color());
         group.setDescription(groupUpdateDto.description());
