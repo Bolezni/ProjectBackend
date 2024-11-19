@@ -5,13 +5,15 @@ spring:
     hikari:
       username: postgres
       password: admin
+  liquibase:
+    change-log: db/changelog/2024/11/19-01-changelog.yaml
   jpa:
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   mail:
     host: smtp.gmail.com
     port: 587
