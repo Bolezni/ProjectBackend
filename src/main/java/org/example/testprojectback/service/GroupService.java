@@ -172,34 +172,27 @@ public class GroupService {
 
     @Transactional
     public Map<String, List<GroupDto>> getTopGroupsGroupedByInterest(int maxGroupsPerInterest) {
-        List<Map<String, Object>> rawResults = groupRepository.findTopGroupsWithSubscribersByInterest();
+        List<Group> groupsData = groupRepository.findAll();
 
-        return rawResults.stream()
-                .collect(Collectors.groupingBy(
-                        row -> (String) row.get("interestName"),
-                        Collectors.mapping(this::mapToGroup, Collectors.toList())
-                ))
-                .entrySet()
-                .stream()
+        Map<String, List<Group>> groupedByInterest = groupsData.stream()
+                .flatMap(group -> group.getInterests().stream()
+                        .map(interest -> new AbstractMap.SimpleEntry<>(interest.getName(), group)))
+                .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+
+        return groupedByInterest.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue().stream()
+                                .sorted(Comparator.comparingInt((Group group) -> Optional.ofNullable(group.getSubscribers())
+                                                .map(Set::size)
+                                                .orElse(0))
+                                        .reversed())
                                 .limit(maxGroupsPerInterest)
                                 .map(groupDtoMapper::toDto)
-                                .toList(),
+                                .collect(Collectors.toList()),
                         (a, b) -> a,
                         LinkedHashMap::new
                 ));
     }
 
-    private Group mapToGroup(Map<String, Object> row) {
-        return new Group(
-                (Long) row.get("groupId"),
-                null,
-                (String) row.get("groupName"),
-                (String) row.get("groupColor"),
-                (String) row.get("groupDescription"),
-                null
-        );
-    }
 }

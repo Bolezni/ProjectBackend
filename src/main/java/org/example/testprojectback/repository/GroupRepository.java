@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
@@ -33,22 +32,4 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM User u JOIN u.subscribedGroups g WHERE u.username = :userName")
     Page<Group> findSubscribedGroupsByUserName(@Param("userName") String userName, Pageable pageable);
-
-
-    @Query(value = """
-        SELECT i.name AS interestName, 
-               g.id AS groupId, 
-               g.name AS groupName, 
-               g.color AS groupColor, 
-               g.description AS groupDescription,
-               COUNT(s.id) AS subscriberCount
-        FROM group_interest gi
-        JOIN interests i ON gi.interest_id = i.id
-        JOIN groups g ON gi.group_id = g.id
-        LEFT JOIN groups_subscribers gs ON g.id = gs.group_id
-        LEFT JOIN users s ON gs.subscribers_id = s.id
-        GROUP BY i.name, g.id
-        ORDER BY i.name, subscriberCount DESC
-    """, nativeQuery = true)
-    List<Map<String, Object>> findTopGroupsWithSubscribersByInterest();
 }
