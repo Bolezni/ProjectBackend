@@ -29,4 +29,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Override
     long count();
+
+    @Query("SELECT g FROM User u JOIN u.subscribedGroups g WHERE u.username = :userName")
+    Page<Group> findSubscribedGroupsByUserName(@Param("userName") String userName, Pageable pageable);
+
 }

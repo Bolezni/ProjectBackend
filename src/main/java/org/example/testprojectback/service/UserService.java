@@ -19,7 +19,6 @@ import org.example.testprojectback.sercurity.RefreshTokenDto;
 import org.example.testprojectback.sercurity.jwt.JwtAuthDto;
 import org.example.testprojectback.sercurity.jwt.JwtService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -353,24 +352,9 @@ public class UserService {
     }
     @Transactional
     public Page<GroupDto> getUserSubscribedGroups(String userName, int page, int size) {
-        User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Преобразование в список с помощью Stream
-        List<GroupDto> groupDtos = user.getSubscribedGroups().stream()
-                .map(groupDtoMapper::toDto)
-                .collect(Collectors.toList());
-
-        // Реализация пагинации вручную
         Pageable pageable = PageRequest.of(page, size);
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), groupDtos.size());
-
-        if (start > groupDtos.size()) {
-            return new PageImpl<>(Collections.emptyList(), pageable, groupDtos.size());
-        }
-
-        return new PageImpl<>(groupDtos.subList(start, end), pageable, groupDtos.size());
+        Page<Group> subscribedGroups = groupRepository.findSubscribedGroupsByUserName(userName, pageable);
+        return subscribedGroups.map(groupDtoMapper::toDto);
     }
     @Transactional
     public void unSubscribeGroup(String userName, Long groupId) {
