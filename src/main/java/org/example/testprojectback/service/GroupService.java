@@ -1,6 +1,7 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.testprojectback.controller.helper.ControllerHelper;
 import org.example.testprojectback.dto.GroupDto;
 import org.example.testprojectback.dto.GroupUpdateDto;
 import org.example.testprojectback.dto.InterestDto;
@@ -12,6 +13,9 @@ import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.GroupRepository;
 import org.example.testprojectback.repository.InterestRepository;
 import org.example.testprojectback.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ public class GroupService {
 
     private final GroupDtoMapper groupDtoMapper;
     private final InterestRepository interestRepository;
+    private final ControllerHelper controllerHelper;
 
     @Transactional
     public void createGroup(String userName, GroupDto groupDto) {
@@ -81,8 +86,6 @@ public class GroupService {
             group.getSubscribers().addAll(users);
         }
 
-
-
         groupRepository.saveAndFlush(group);
     }
 
@@ -100,11 +103,9 @@ public class GroupService {
     }
 
     @Transactional
-    public List<GroupDto> getAllGroups() {
-        return groupRepository.findAll()
-                .stream()
-                .map(groupDtoMapper::toDto)
-                .collect(Collectors.toList());
+    public Page<GroupDto> getAllGroups(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return groupRepository.findAll(pageable).map(groupDtoMapper::toDto);
     }
 
     public List<GroupDto> fetchGroupsByName(Optional<String> optionalPrefixName) {
@@ -164,28 +165,7 @@ public class GroupService {
         group.setColor(groupUpdateDto.color());
         group.setDescription(groupUpdateDto.description());
 
-        if (groupUpdateDto.interests() != null) {
-            Set<String> interestNames = groupUpdateDto.interests()
-                    .stream()
-                    .map(InterestDto::name)
-                    .collect(Collectors.toSet());
-
-            Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
-
-            if (interests.size() != interestNames.size()) {
-                throw new IllegalArgumentException("Some interests are not found in the database");
-            }
-
-            Set<Interest> currentInterests = group.getInterests();
-            Set<Interest> interestsToRemove = new HashSet<>(currentInterests);
-            interestsToRemove.removeAll(interests);
-
-            Set<Interest> interestsToAdd = new HashSet<>(interests);
-            interestsToAdd.removeAll(currentInterests);
-
-            currentInterests.removeAll(interestsToRemove);
-            currentInterests.addAll(interestsToAdd);
-        }
+        controllerHelper.switchInterests(group, groupUpdateDto.interests());
 
         groupRepository.saveAndFlush(group);
     }

@@ -2,24 +2,21 @@ package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.*;
-import org.example.testprojectback.mapper.GroupDtoMapper;
-import org.example.testprojectback.model.Group;
-import org.example.testprojectback.model.User;
 import org.example.testprojectback.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final GroupDtoMapper groupDtoMapper;
 
     private static final String GET_USER_CREATED_GROUPS = "/api/user/{login}/groups/created";
     private static final String UPLOAD_PROFILE_IMAGE = "/api/user/{login}/profile-image";
@@ -47,8 +44,8 @@ public class UserController {
     }
 
     @GetMapping(GET_INTERESTS)
-    public Set<InterestDto> getInterests(@PathVariable(name = "login") String userName) {
-       return userService.getInterests(userName);
+    public Set<InterestDto> getInterests(@PathVariable(name = "login") String username) {
+       return userService.getInterests(username);
     }
     @GetMapping(GET_USER_BY_LOGIN)
     public UserDtoResponse getUserByLogin(@PathVariable(name = "login") String userName) {
@@ -56,21 +53,21 @@ public class UserController {
     }
 
     @GetMapping(GET_USER_GROUPS)
-    public Set<GroupDto> getUserSubscribedGroups(@PathVariable(name = "login") String userName) {
-        return userService.getUserSubscribedGroups(userName);
+    public ResponseEntity<Page<GroupDto>> getUserSubscribedGroups(@PathVariable(name = "login") String userName,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        Page<GroupDto> groups = userService.getUserSubscribedGroups(userName, page, size);
+        return ResponseEntity.ok(groups);
     }
 
     @GetMapping(GET_USER_CREATED_GROUPS)
-    public Set<GroupDto> getUserCreatedGroups(@PathVariable(name = "login") String userName) {
-        Set<Group> groups = userService.getUserByUserName(userName)
-                .map(User::getCreatedGroups)
-                .orElseThrow(() -> new RuntimeException(
-                        "User not found"
-                ));
-
-        return groups.stream()
-                .map(groupDtoMapper::toDto)
-                .collect(Collectors.toSet());
+    public ResponseEntity<Page<GroupDto>> getUserCreatedGroups(
+            @PathVariable(name = "login") String userName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<GroupDto> groups = userService.getUserCreatedGroups(userName, page, size);
+        return ResponseEntity.ok(groups);
     }
 
     @PutMapping(UPDATE_USER)
@@ -83,11 +80,8 @@ public class UserController {
     }
 
     @PutMapping(UPDATE_SECURITY_INFO)
-    public ResponseEntity<?> updateSecurityUserInfo(@PathVariable(name = "login") String userName,
-                                                    @RequestParam(name = "new_login") String newUserName,
-                                                    @RequestParam(name = "password") String newPassword,
-                                                    @RequestParam(name = "email") String newEmail){
-        userService.updateSecurityUserData(userName,newUserName,newPassword,newEmail);
+    public ResponseEntity<?> updateSecurityUserInfo(@PathVariable(name = "login") String username,@Valid @RequestBody UserSecurityDataDto userSecurityDataDto){
+        userService.updateSecurityUserData(username,userSecurityDataDto);
 
         return ResponseEntity.ok()
                 .body(HttpStatus.ACCEPTED);
@@ -160,5 +154,7 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+
 
 }

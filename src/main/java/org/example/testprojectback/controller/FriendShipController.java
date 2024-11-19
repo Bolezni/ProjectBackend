@@ -3,21 +3,19 @@ package org.example.testprojectback.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.FriendShipDto;
 import org.example.testprojectback.dto.UserFriendDto;
-import org.example.testprojectback.mapper.UserFriendDtoMapper;
 import org.example.testprojectback.service.FriendShipService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/friendships")
 @RequiredArgsConstructor
 public class FriendShipController {
 
-    private final UserFriendDtoMapper userFriendDtoMapper;
     private final FriendShipService friendShipService;
 
     private static final String ACCEPT_FRIEND = "/accept";
@@ -49,11 +47,13 @@ public class FriendShipController {
     }
 
     @GetMapping(GET_FRIENDS)
-    public List<UserFriendDto> getFriends(@RequestParam(name = "login") String userName) {
-        return friendShipService.getFriends(userName).
-                stream()
-                .map(userFriendDtoMapper::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<UserFriendDto>> getFriends(
+            @RequestParam(name = "login") String userName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<UserFriendDto> friends = friendShipService.getFriends(userName, page, size);
+        return ResponseEntity.ok(friends);
     }
 
     @DeleteMapping(REMOVE)

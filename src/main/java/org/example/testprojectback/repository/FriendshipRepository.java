@@ -2,8 +2,11 @@ package org.example.testprojectback.repository;
 
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,5 +24,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     List<Friendship> findByFriendAndStatus(User user, String pending);
 
-    List<Friendship> findByUserAndStatus(User user, String status);
+    @Query("SELECT f FROM Friendship f WHERE f.user = :user AND f.status = :status")
+    Page<Friendship> findByUserAndStatus(@Param("user") User user, @Param("status") String status, Pageable pageable);
+
 }

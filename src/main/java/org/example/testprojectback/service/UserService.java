@@ -1,6 +1,7 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.testprojectback.controller.helper.ControllerHelper;
 import org.example.testprojectback.dto.*;
 import org.example.testprojectback.email.DefaultEmailService;
 import org.example.testprojectback.mapper.GroupDtoMapper;
@@ -17,6 +18,10 @@ import org.example.testprojectback.repository.UserRepository;
 import org.example.testprojectback.sercurity.RefreshTokenDto;
 import org.example.testprojectback.sercurity.jwt.JwtAuthDto;
 import org.example.testprojectback.sercurity.jwt.JwtService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +48,7 @@ public class UserService {
     private final GroupRepository groupRepository;
     private final DefaultEmailService defaultEmailService;
     private final NotificationRepository notificationRepository;
+    private final ControllerHelper controllerHelper;
 
     @Transactional
     public void addUser(UserDto userDto) {
@@ -130,10 +136,6 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public Optional<User> getUserByUserName(String username) {
-        return userRepository.findByUsername(username);
-    }
-
 
     @Transactional
     public void updateUserProfile(String userName, UserDtoUpdate userDtoUpdate) {
@@ -151,37 +153,35 @@ public class UserService {
             }
         }
 
-        user.setFirstName(userDtoUpdate.firstname());
-        user.setLastName(userDtoUpdate.lastname());
-        user.setPatronymic(userDtoUpdate.patronymic());
-        user.setBirthDay(userDtoUpdate.birthDay());
-        user.setGender(userDtoUpdate.gender());
-        user.setDescription(userDtoUpdate.description());
-        user.setTgName(userDtoUpdate.tgName());
+        Optional.ofNullable(userDtoUpdate.firstname())
+                .filter(firstname -> !firstname.isEmpty())
+                .ifPresent(user::setFirstName);
 
-        if(userDtoUpdate.interests() != null){
+        Optional.ofNullable(userDtoUpdate.lastname())
+                .filter(lastname -> !lastname.isEmpty())
+                .ifPresent(user::setLastName);
 
-            Set<String> interestNames = userDtoUpdate.interests()
-                    .stream()
-                    .map(InterestDto::name)
-                    .collect(Collectors.toSet());
+        Optional.ofNullable(userDtoUpdate.patronymic())
+                .filter(patronymic -> !patronymic.isEmpty())
+                .ifPresent(user::setPatronymic);
 
-            Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestNames));
+        Optional.ofNullable(userDtoUpdate.birthDay())
+                .filter(birthDay -> birthDay.isBefore(LocalDate.now()))
+                .filter(birthDay -> birthDay.isAfter(LocalDate.now().minusYears(100)))
+                .ifPresent(user::setBirthDay);
+        Optional.ofNullable(userDtoUpdate.description())
+                .filter(description -> !description.isEmpty())
+                .ifPresent(user::setDescription);
 
-            if (interests.size() != interestNames.size()) {
-                throw new IllegalArgumentException("Some interests are not found in the database");
-            }
+        Optional.ofNullable(userDtoUpdate.tgName())
+                .filter(tgName -> !tgName.isEmpty())
+                .ifPresent(user::setTgName);
 
-            Set<Interest> currentInterests = user.getInterests();
-            Set<Interest> interestsToRemove = new HashSet<>(currentInterests);
-            interestsToRemove.removeAll(interests);
+        Optional.ofNullable(userDtoUpdate.gender())
+                        .ifPresent(user::setGender);
 
-            Set<Interest> interestsToAdd = new HashSet<>(interests);
-            interestsToAdd.removeAll(currentInterests);
+        controllerHelper.switchInterests(user,userDtoUpdate.interests());
 
-            currentInterests.removeAll(interestsToRemove);
-            currentInterests.addAll(interestsToAdd);
-        }
         userRepository.saveAndFlush(user);
     }
 
@@ -203,7 +203,6 @@ public class UserService {
                 .filter(interest -> !interestNames.contains(interest.getName()))
                 .collect(Collectors.toSet()));
 
-        // Сохраняем изменения
         userRepository.save(user);
     }
 
@@ -222,7 +221,6 @@ public class UserService {
         userRepository.saveAndFlush(user);
     }
 
-
     @Transactional
     public UserDtoResponse getUserDtoByUserName(String userName) {
         User user = userRepository
@@ -232,41 +230,41 @@ public class UserService {
         return userDtoResponseMapper.toDto(user);
     }
     @Transactional
-    public void updateSecurityUserData(String userName,String newUserName, String newPassword, String newEmail) {
+    public void updateSecurityUserData(String username,UserSecurityDataDto userSecurity) {
 
         User user = userRepository
-                .findByUsername(userName)
+                .findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User  not found"));
 
-        if (newUserName != null && !newUserName.trim().isEmpty()) {
-            validateUsername(newUserName);
-            if (!user.getUsername().equals(newUserName) && userRepository.existsByUsername(newUserName)) {
-                throw new RuntimeException("Username already exists");
-            }
-            user.setUsername(newUserName);
+        if(userSecurity.newUserName().equals(user.getUsername()) &&
+                userRepository.existsByUsername(userSecurity.newUserName())) {
+            throw new IllegalArgumentException("Username already exists");
         }
 
-        if (newEmail != null && !newEmail.trim().isEmpty()) {
-            validateEmail(newEmail);
-            if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
-                throw new RuntimeException("Email already exists");
-            }
-            user.setEmail(newEmail);
+        if(userSecurity.oldPassword().equals(user.getPassword())) {
+            throw new IllegalArgumentException("Old password does not match");
+        }
+        if(userSecurity.newPassword().equals(user.getPassword())) {
+            throw new IllegalArgumentException("Password already exists");
         }
 
-        if (newPassword != null && newPassword.trim().length() >= 6) {
-            user.setPassword(passwordEncoder.encode(newPassword));
-        } else if (newPassword != null) {
-            throw new IllegalArgumentException("Password must be at least 6 characters");
-        }
+        Optional.ofNullable(userSecurity.newUserName())
+                .filter(name -> !name.isEmpty())
+                .ifPresent(user::setUsername);
+
+        String pass = passwordEncoder.encode(userSecurity.newPassword());
+
+        Optional.ofNullable(pass)
+                .filter(password -> !password.isEmpty())
+                .ifPresent(user::setPassword);
 
         userRepository.saveAndFlush(user);
     }
 
 
-    public Set<InterestDto> getInterests(String userName) {
+    public Set<InterestDto> getInterests(String username) {
         User user = userRepository
-                .findByUsername(userName)
+                .findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User  not found"));
 
         Set<Interest> interests = user.getInterests();
@@ -320,17 +318,6 @@ public class UserService {
         return userDtoMapper.toDto(user);
     }
 
-    private void validateUsername(String username) {
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
-        }
-    }
-
-    private void validateEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be null or empty");
-        }
-    }
 
     @Transactional
     public void uploadProfileImage(String userName, String profileImageId) {
@@ -365,13 +352,25 @@ public class UserService {
         return false;
     }
     @Transactional
-    public Set<GroupDto> getUserSubscribedGroups(String userName) {
+    public Page<GroupDto> getUserSubscribedGroups(String userName, int page, int size) {
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return user.getSubscribedGroups().stream()
+        // Преобразование в список с помощью Stream
+        List<GroupDto> groupDtos = user.getSubscribedGroups().stream()
                 .map(groupDtoMapper::toDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+
+        // Реализация пагинации вручную
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), groupDtos.size());
+
+        if (start > groupDtos.size()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, groupDtos.size());
+        }
+
+        return new PageImpl<>(groupDtos.subList(start, end), pageable, groupDtos.size());
     }
     @Transactional
     public void unSubscribeGroup(String userName, Long groupId) {
@@ -435,6 +434,13 @@ public class UserService {
         user.getInterests().addAll(interestSet);
 
         userRepository.saveAndFlush(user);
+    }
+
+    @Transactional
+    public Page<GroupDto> getUserCreatedGroups(String userName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Group> groups = groupRepository.findByCreatorUsername(userName, pageable);
+        return groups.map(groupDtoMapper::toDto);
     }
 
 }

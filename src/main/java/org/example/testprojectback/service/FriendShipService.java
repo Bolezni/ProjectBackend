@@ -2,11 +2,16 @@ package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.FriendShipDto;
+import org.example.testprojectback.dto.UserFriendDto;
 import org.example.testprojectback.mapper.FriendShipDtoMapper;
+import org.example.testprojectback.mapper.UserFriendDtoMapper;
 import org.example.testprojectback.model.Friendship;
 import org.example.testprojectback.model.User;
 import org.example.testprojectback.repository.FriendshipRepository;
 import org.example.testprojectback.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +27,20 @@ public class FriendShipService {
 
     private final UserRepository userRepository;
     private final FriendShipDtoMapper friendShipDtoMapper;
+    private final UserFriendDtoMapper userFriendDtoMapper;
 
 
     @Transactional
-    public List<User> getFriends(String username) {
+    public Page<UserFriendDto> getFriends(String username, int page, int size) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Friendship> friendships = friendshipRepository.findByUserAndStatus(user,"ACCEPTED");
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Friendship> friendships = friendshipRepository.findByUserAndStatus(user, "ACCEPTED", pageable);
 
-        return friendships.stream()
-                .map(Friendship::getFriend)
-                .collect(Collectors.toList());
+        return friendships.map(friendship -> userFriendDtoMapper.toDto(friendship.getFriend()));
     }
+
 
 
     @Transactional

@@ -19,8 +19,9 @@ public class UserDtoMapper {
                 user.getDescription(),
                 user.getProfileImageId(),
                 user.getAge(),
-                user.isAdmin(),
                 user.isActivated(),
+                user.isAdmin(),
+
                 user.getBirthDay()
         );
     }

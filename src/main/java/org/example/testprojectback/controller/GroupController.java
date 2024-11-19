@@ -7,6 +7,7 @@ import org.example.testprojectback.dto.InterestDto;
 import org.example.testprojectback.dto.NotificationDto;
 import org.example.testprojectback.service.GroupService;
 import org.example.testprojectback.service.NotificationService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +35,13 @@ public class GroupController {
     private static final String GET_GROUP_BY_ID = "/groups/{groupID}";
 
 
-
     @GetMapping(GET_ALL_GROUPS)
-    public List<GroupDto> getAllGroups() {
-        return groupService.getAllGroups();
+    public ResponseEntity<Page<GroupDto>> getAllGroups(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<GroupDto> groups = groupService.getAllGroups(page, size);
+        return ResponseEntity.ok(groups);
     }
 
     @PostMapping(CREATE_GROUP)

@@ -65,7 +65,7 @@ public class JwtService {
     }
 
     private String generateJwtToken(String username) {
-        Date date = Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(username)
                 .expiration(date)
@@ -74,7 +74,7 @@ public class JwtService {
     }
 
     private String generateRefreshToken(String username) {
-        Date date = Date.from(LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(LocalDateTime.now().plusMonths(1).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(username)
                 .expiration(date)
