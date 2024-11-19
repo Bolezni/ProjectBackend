@@ -560,3 +560,99 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: users
 
+  - changeSet:
+      id: 1732031838921-32
+      author: Admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Программирование"
+              - column:
+                  name: color
+                  value: "000000"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Спорт"
+              - column:
+                  name: color
+                  value: "FF5733"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Музыка"
+              - column:
+                  name: color
+                  value: "3498DB"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Искусство"
+              - column:
+                  name: color
+                  value: "9B59B6"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Кулинария"
+              - column:
+                  name: color
+                  value: "F39C12"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Путешествия"
+              - column:
+                  name: color
+                  value: "1ABC9C"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Танцы"
+              - column:
+                  name: color
+                  value: "E74C3C"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Фотография"
+              - column:
+                  name: color
+                  value: "2C3E50"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Наука"
+              - column:
+                  name: color
+                  value: "16A085"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Чтение"
+              - column:
+                  name: color
+                  value: "F5B041"
+
