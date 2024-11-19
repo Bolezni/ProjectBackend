@@ -169,4 +169,37 @@ public class GroupService {
 
         groupRepository.saveAndFlush(group);
     }
+
+    @Transactional
+    public Map<String, List<GroupDto>> getTopGroupsGroupedByInterest(int maxGroupsPerInterest) {
+        List<Map<String, Object>> rawResults = groupRepository.findTopGroupsWithSubscribersByInterest();
+
+        return rawResults.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (String) row.get("interestName"),
+                        Collectors.mapping(this::mapToGroup, Collectors.toList())
+                ))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .limit(maxGroupsPerInterest)
+                                .map(groupDtoMapper::toDto)
+                                .toList(),
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                ));
+    }
+
+    private Group mapToGroup(Map<String, Object> row) {
+        return new Group(
+                (Long) row.get("groupId"),
+                null,
+                (String) row.get("groupName"),
+                (String) row.get("groupColor"),
+                (String) row.get("groupDescription"),
+                null
+        );
+    }
 }

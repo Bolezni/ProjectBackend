@@ -18,6 +18,7 @@ public class InterestController {
     private final InterestDtoMapper interestDtoMapper;
 
     private static final String GET_INTEREST = "/interest";
+    private static final String UPDATE_INTEREST = "/update";
 
     @GetMapping
     public List<Interest> getInterests() {
@@ -29,5 +30,11 @@ public class InterestController {
         return interestService.getInterestByName(interestName)
                 .map(interestDtoMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Interest not found"));
+    }
+
+    @PutMapping(UPDATE_INTEREST)
+    public void updateColorInterest(@RequestParam(name = "interestName") String interestName,
+                                    @RequestParam(name = "color") String color) {
+        interestService.update(interestName,color);
     }
 }

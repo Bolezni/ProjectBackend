@@ -5,6 +5,7 @@ import org.example.testprojectback.dto.GroupDto;
 import org.example.testprojectback.dto.GroupUpdateDto;
 import org.example.testprojectback.dto.InterestDto;
 import org.example.testprojectback.dto.NotificationDto;
+import org.example.testprojectback.model.Group;
 import org.example.testprojectback.service.GroupService;
 import org.example.testprojectback.service.NotificationService;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,6 +35,7 @@ public class GroupController {
     private static final String UPDATE_GROUP = "/groups/{groupId}/update";
     private static final String GET_ALL_GROUPS = "/groups";
     private static final String GET_GROUP_BY_ID = "/groups/{groupID}";
+    private static final String TOP_INTEREST = "/groups/top-by-interest";
 
 
     @GetMapping(GET_ALL_GROUPS)
@@ -43,6 +46,8 @@ public class GroupController {
         Page<GroupDto> groups = groupService.getAllGroups(page, size);
         return ResponseEntity.ok(groups);
     }
+
+
 
     @PostMapping(CREATE_GROUP)
     public ResponseEntity<?> createGroup(@PathVariable(name = "login") String userName,
@@ -108,6 +113,13 @@ public class GroupController {
         groupService.updateGroup(groupId,groupUpdateDto);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(TOP_INTEREST)
+    public ResponseEntity<Map<String, List<GroupDto>>> getTopGroupsByInterest(
+            @RequestParam(defaultValue = "6") int maxGroupsPerInterest) {
+        Map<String, List<GroupDto>> result = groupService.getTopGroupsGroupedByInterest(maxGroupsPerInterest);
+        return ResponseEntity.ok(result);
     }
 
 }

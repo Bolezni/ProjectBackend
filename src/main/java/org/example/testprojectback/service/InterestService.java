@@ -25,4 +25,16 @@ public class InterestService {
     public List<Interest> getAllInterests() {
         return interestRepository.findAll();
     }
+
+    @Transactional
+    public void update(String interestName, String color) {
+        Interest interest = interestRepository
+                .findByName(interestName)
+                .orElseThrow(() -> new IllegalArgumentException("Interest with name '" + interestName + "' does not exist"));
+
+        if (color != null && !color.isEmpty() && !color.equals(interest.getColor())) {
+            interest.setColor(color);
+        }
+        interestRepository.save(interest);
+    }
 }
