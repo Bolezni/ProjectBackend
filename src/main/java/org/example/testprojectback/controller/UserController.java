@@ -54,7 +54,7 @@ public class UserController {
 
     @GetMapping(GET_USER_GROUPS)
     public ResponseEntity<Page<GroupDto>> getUserSubscribedGroups(@PathVariable(name = "login") String userName,
-                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "1") int page,
                                                   @RequestParam(defaultValue = "10") int size) {
         Page<GroupDto> groups = userService.getUserSubscribedGroups(userName, page, size);
         return ResponseEntity.ok(groups);
@@ -63,7 +63,7 @@ public class UserController {
     @GetMapping(GET_USER_CREATED_GROUPS)
     public ResponseEntity<Page<GroupDto>> getUserCreatedGroups(
             @PathVariable(name = "login") String userName,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<GroupDto> groups = userService.getUserCreatedGroups(userName, page, size);
@@ -80,7 +80,8 @@ public class UserController {
     }
 
     @PutMapping(UPDATE_SECURITY_INFO)
-    public ResponseEntity<?> updateSecurityUserInfo(@PathVariable(name = "login") String username,@Valid @RequestBody UserSecurityDataDto userSecurityDataDto){
+    public ResponseEntity<?> updateSecurityUserInfo(@PathVariable(name = "login") String username,
+                                                    @Valid @RequestBody UserSecurityDataDto userSecurityDataDto){
         userService.updateSecurityUserData(username,userSecurityDataDto);
 
         return ResponseEntity.ok()

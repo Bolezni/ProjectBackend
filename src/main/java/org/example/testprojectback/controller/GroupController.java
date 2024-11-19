@@ -37,7 +37,7 @@ public class GroupController {
 
     @GetMapping(GET_ALL_GROUPS)
     public ResponseEntity<Page<GroupDto>> getAllGroups(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<GroupDto> groups = groupService.getAllGroups(page, size);

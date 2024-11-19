@@ -49,7 +49,7 @@ public class FriendShipController {
     @GetMapping(GET_FRIENDS)
     public ResponseEntity<Page<UserFriendDto>> getFriends(
             @RequestParam(name = "login") String userName,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<UserFriendDto> friends = friendShipService.getFriends(userName, page, size);
