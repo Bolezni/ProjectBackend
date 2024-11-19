@@ -8,7 +8,7 @@
 <ul>
     <li>User Registration & Authentication (JWT-based)</li>
     <li>CRUD operations for managing entities</li>
-    <li>Database integration (PostgreSQL or H2)</li>
+    <li>Database integration (PostgreSQL)</li>
     <li>Dockerized environment for easier deployment</li>
 </ul>
 
