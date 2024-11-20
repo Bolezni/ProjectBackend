@@ -560,6 +560,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: users
 
+#Добавление 10 интересов
   - changeSet:
       id: 1732031838921-32
       author: Admin
@@ -656,3 +657,421 @@ databaseChangeLog:
                   name: color
                   value: "F5B041"
 
+  - changeSet:
+      id: 1732031838921-33
+      author: Admin
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: first_name
+                  value: "Admin"
+              - column:
+                  name: last_name
+                  value: "Admin"
+              - column:
+                  name: patronymic
+                  value: null
+              - column:
+                  name: password
+                  value: "$2b$12$eW5wIJ2HRQo.TpYvskNpS.xjFO26bK/XZ.yDwNzHCEfEpBr.dOXpC" # хэш для "admin"
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: is_activated
+                  valueBoolean: true
+              - column:
+                  name: activate_code
+                  value: null
+              - column:
+                  name: gender
+                  value: "Male"
+              - column:
+                  name: description
+                  value: "Administrator account with all permissions."
+              - column:
+                  name: tg_name
+                  value: "@admin_tg"
+              - column:
+                  name: profile_image_id
+                  value: ""
+              - column:
+                  name: is_admin
+                  valueBoolean: true
+              - column:
+                  name: birth_day
+                  value: "1990-01-01"
+
+
+
+    #Добавление 20 групп
+  - changeSet:
+      id: 1732031838921-34
+      author: Admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "DEV"
+              - column:
+                  name: name
+                  value: "Разработчики"
+              - column:
+                  name: color
+                  value: "0000FF"
+              - column:
+                  name: description
+                  value: "Сообщество для программистов и разработчиков."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "FIT"
+              - column:
+                  name: name
+                  value: "Фитнес и здоровье"
+              - column:
+                  name: color
+                  value: "FF4500"
+              - column:
+                  name: description
+                  value: "Обсуждаем спорт, фитнес и здоровый образ жизни."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "ART"
+              - column:
+                  name: name
+                  value: "Искусство"
+              - column:
+                  name: color
+                  value: "8A2BE2"
+              - column:
+                  name: description
+                  value: "Группа для обсуждения живописи, скульптуры и других видов искусства."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "MUS"
+              - column:
+                  name: name
+                  value: "Музыканты"
+              - column:
+                  name: color
+                  value: "1E90FF"
+              - column:
+                  name: description
+                  value: "Место для общения музыкантов и любителей музыки."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "TRV"
+              - column:
+                  name: name
+                  value: "Путешествия"
+              - column:
+                  name: color
+                  value: "32CD32"
+              - column:
+                  name: description
+                  value: "Делимся опытом путешествий и планируем новые маршруты."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "FOD"
+              - column:
+                  name: name
+                  value: "Гурманы"
+              - column:
+                  name: color
+                  value: "FFA500"
+              - column:
+                  name: description
+                  value: "Обсуждаем лучшие рецепты и кулинарные секреты."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "DNC"
+              - column:
+                  name: name
+                  value: "Танцы"
+              - column:
+                  name: color
+                  value: "FF69B4"
+              - column:
+                  name: description
+                  value: "Для любителей и профессионалов в области танцев."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "SCI"
+              - column:
+                  name: name
+                  value: "Наука"
+              - column:
+                  name: color
+                  value: "FFD700"
+              - column:
+                  name: description
+                  value: "Научные дискуссии, новости и открытия."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "RED"
+              - column:
+                  name: name
+                  value: "Чтение"
+              - column:
+                  name: color
+                  value: "FFB6C1"
+              - column:
+                  name: description
+                  value: "Для любителей книг и литературы."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "PHT"
+              - column:
+                  name: name
+                  value: "Фотография"
+              - column:
+                  name: color
+                  value: "2F4F4F"
+              - column:
+                  name: description
+                  value: "Сообщество фотографов и любителей фотоискусства."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "MKT"
+              - column:
+                  name: name
+                  value: "Маркетинг"
+              - column:
+                  name: color
+                  value: "FF6347"
+              - column:
+                  name: description
+                  value: "Обсуждаем маркетинг, рекламу и брендинг."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "SRT"
+              - column:
+                  name: name
+                  value: "Стартапы"
+              - column:
+                  name: color
+                  value: "00CED1"
+              - column:
+                  name: description
+                  value: "Для всех, кто занимается стартапами и предпринимательством."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "ECO"
+              - column:
+                  name: name
+                  value: "Экология"
+              - column:
+                  name: color
+                  value: "32CD32"
+              - column:
+                  name: description
+                  value: "Обсуждаем экологию и устойчивое развитие."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "GAM"
+              - column:
+                  name: name
+                  value: "Геймеры"
+              - column:
+                  name: color
+                  value: "000000"
+              - column:
+                  name: description
+                  value: "Место для любителей видеоигр."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "INV"
+              - column:
+                  name: name
+                  value: "Инвесторы"
+              - column:
+                  name: color
+                  value: "8B0000"
+              - column:
+                  name: description
+                  value: "Группа для обсуждения инвестиций и финансов."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "TRN"
+              - column:
+                  name: name
+                  value: "Тренды технологий"
+              - column:
+                  name: color
+                  value: "4682B4"
+              - column:
+                  name: description
+                  value: "Обсуждаем современные технологии и их развитие."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "KID"
+              - column:
+                  name: name
+                  value: "Дети и развитие"
+              - column:
+                  name: color
+                  value: "FF4500"
+              - column:
+                  name: description
+                  value: "Группа для родителей и педагогов."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "AUT"
+              - column:
+                  name: name
+                  value: "Автомобили"
+              - column:
+                  name: color
+                  value: "000080"
+              - column:
+                  name: description
+                  value: "Место для автолюбителей."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "LAN"
+              - column:
+                  name: name
+                  value: "Языки"
+              - column:
+                  name: color
+                  value: "A52A2A"
+              - column:
+                  name: description
+                  value: "Изучаем иностранные языки вместе."
+              - column:
+                  name: creator_id
+                  value: 1
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "SPC"
+              - column:
+                  name: name
+                  value: "Космос"
+              - column:
+                  name: color
+                  value: "696969"
+              - column:
+                  name: description
+                  value: "Все о космосе и астрономии."
+              - column:
+                  name: creator_id
+                  value: 1
