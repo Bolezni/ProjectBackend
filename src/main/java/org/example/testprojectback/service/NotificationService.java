@@ -3,6 +3,7 @@ package org.example.testprojectback.service;
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.NotificationDto;
 import org.example.testprojectback.dto.UserDto;
+import org.example.testprojectback.exceptions.*;
 import org.example.testprojectback.mapper.NotificationDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
 import org.example.testprojectback.model.Group;
@@ -31,19 +32,19 @@ public class NotificationService {
     public NotificationDto createNotification(String fromUsername,String toUsername , Long groupId) {
         User userFrom = userRepository
                 .findByUsername(fromUsername)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
 
         User userTo = userRepository
                 .findByUsername(toUsername)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Group group = groupRepository
                 .findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         if(notificationRepository.existsByInviteeAndGroup(userTo,group)){
-            throw new RuntimeException("Notification already exists");
+            throw new NotificationAlreadyExistException("Notification already exists");
         }
 
         Notification notification = Notification.builder()
@@ -59,7 +60,7 @@ public class NotificationService {
     @Transactional
     public void acceptNotification(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
 
 
         User invitee = notification.getInvitee();
@@ -68,20 +69,20 @@ public class NotificationService {
         Group group = notification.getGroup();
 
         if(invitee.getSubscribedGroups().contains(group)) {
-            throw new RuntimeException("Invitation already accepted");
+            throw new NotificationStatusException("Invitation already accepted");
         }
         else {
             invitee.getSubscribedGroups().add(group);
         }
 
         if(group.getSubscribers().contains(invitee)) {
-            throw new RuntimeException("Invitation already accepted");
+            throw new NotificationStatusException("Invitation already accepted");
         }else {
             group.getSubscribers().add(invitee);
         }
 
         if(!notificationRepository.existsByInviterAndInviteeAndGroup(inviter, invitee,group)) {
-            throw new RuntimeException("Invitation already accepted");
+            throw new NotificationStatusException("Invitation already accepted");
         }
 
         notificationRepository.deleteNotificationsByUserIdAndGroup(invitee.getId(), group.getId());
@@ -95,7 +96,7 @@ public class NotificationService {
     @Transactional
     public void cancelNotification(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
 
         User invitee = notification.getInvitee();
 
@@ -113,7 +114,7 @@ public class NotificationService {
 
     public NotificationDto getInvitation(Long notificationId) {
          Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
 
         return notificationDtoMapper.toDto(notification);
     }
@@ -121,7 +122,7 @@ public class NotificationService {
     @Transactional
     public List<NotificationDto> getAllNotificationsByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Notification> list = notificationRepository.findByInvitee(user);
 
@@ -133,10 +134,10 @@ public class NotificationService {
     @Transactional
     public List<UserDto> getAvailableUsersForInvitation(Long groupId, String username) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Long groupIdCreator = group.getCreator().getId();
 

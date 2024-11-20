@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.GroupDto;
 import org.example.testprojectback.dto.InterestDto;
 import org.example.testprojectback.dto.UserDto;
+import org.example.testprojectback.exceptions.ResourceNotFoundException;
+import org.example.testprojectback.exceptions.UserNotFoundException;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
@@ -95,7 +97,7 @@ public class AdminService {
 
         Interest interest = interestRepository
                 .findByName(name)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest not found"));
 
         groupRepository.removeInterestFromGroups(interest.getId());
 
@@ -112,7 +114,7 @@ public class AdminService {
         }
 
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         groupRepository.removeUserFromGroups(user.getId());
 

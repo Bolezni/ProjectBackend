@@ -1,6 +1,7 @@
 package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.testprojectback.exceptions.ResourceNotFoundException;
 import org.example.testprojectback.model.Interest;
 import org.example.testprojectback.repository.InterestRepository;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class InterestService {
     public void update(String interestName, String color) {
         Interest interest = interestRepository
                 .findByName(interestName)
-                .orElseThrow(() -> new IllegalArgumentException("Interest with name '" + interestName + "' does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest with name '" + interestName + "' does not exist"));
 
         if (color != null && !color.isEmpty() && !color.equals(interest.getColor())) {
             interest.setColor(color);

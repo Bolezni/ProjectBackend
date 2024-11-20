@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.controller.helper.ControllerHelper;
 import org.example.testprojectback.dto.*;
 import org.example.testprojectback.email.DefaultEmailService;
+import org.example.testprojectback.exceptions.*;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.mapper.InterestDtoMapper;
 import org.example.testprojectback.mapper.UserDtoMapper;
@@ -53,16 +54,12 @@ public class UserService {
     public void addUser(UserRegisterDto userDto) {
 
         if(userRepository.existsByEmail(userDto.email())){
-            throw new IllegalArgumentException(
+            throw new EmailAlreadyExistsException(
                     "email already taken"
             );
         }
         if(userRepository.existsByUsername(userDto.username())){
-            throw new IllegalArgumentException("username already taken");
-        }
-
-        if(userDto.password().length() < 6){
-            throw new IllegalArgumentException("password must be at least 6 characters");
+            throw new UsernameAlreadyExistsException("username already taken");
         }
 
         User user = User.builder()
@@ -90,8 +87,6 @@ public class UserService {
 
     public JwtAuthDto singIn(UserCredentialsDto userCredentialsDto) throws AuthenticationException {
         User user = findByCredentials(userCredentialsDto);
-
-
         return jwtService.generateAuthToken(user.getUsername());
     }
 
@@ -130,7 +125,7 @@ public class UserService {
 
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("customer with login [%s] not found".formatted(username)));
+                .orElseThrow(() -> new UserNotFoundException("customer with login [%s] not found".formatted(username)));
 
         userRepository.delete(user);
     }
@@ -141,7 +136,7 @@ public class UserService {
 
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User already exist"));
+                .orElseThrow(() -> new UserNotFoundException("User already exist"));
 
         if (userDtoUpdate.birthDay() != null) {
             if (userDtoUpdate.birthDay().isAfter(LocalDate.now())) {
@@ -192,7 +187,7 @@ public class UserService {
         }
 
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Set<String> interestNames = interests.stream()
                 .map(InterestDto::name)
@@ -209,11 +204,11 @@ public class UserService {
     public void removeInterestFromUser (String userName, String interestName) {
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new UserNotFoundException("User  not found"));
 
         Interest interest = interestRepository
                 .findByName(interestName)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new InterestNotFoundException("Interest not found"));
 
         user.getInterests().remove(interest);
 
@@ -224,7 +219,7 @@ public class UserService {
     public UserDtoResponse getUserDtoByUserName(String userName) {
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new UserNotFoundException("User  not found"));
 
         return userDtoResponseMapper.toDto(user);
     }
@@ -233,7 +228,7 @@ public class UserService {
 
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
 
         if (!passwordEncoder.matches(userSecurity.oldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Неверный старый пароль");
@@ -263,7 +258,7 @@ public class UserService {
     public Set<InterestDto> getInterests(String username) {
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new UserNotFoundException("User  not found"));
 
         Set<Interest> interests = user.getInterests();
 
@@ -311,7 +306,7 @@ public class UserService {
     public UserDto fetchUserByUserName(String username) {
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(()-> new RuntimeException("User  not found"));
+                .orElseThrow(()-> new UserNotFoundException("User  not found"));
 
         return userDtoMapper.toDto(user);
     }
@@ -321,14 +316,14 @@ public class UserService {
     public void uploadProfileImage(String userName, String profileImageId) {
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(()-> new RuntimeException("User  not found"));
+                .orElseThrow(()-> new UserNotFoundException("User  not found"));
 
         if(profileImageId == null || profileImageId.isEmpty()){
-            throw new RuntimeException("Profile image id cannot be null or empty");
+            throw new IllegalArgumentException("Profile image id cannot be null or empty");
         }
 
         if (user.getProfileImageId() != null && user.getProfileImageId().equals(profileImageId)) {
-            throw new RuntimeException("Profile image already exists");
+            throw new IllegalArgumentException("Profile image already exists");
         }
 
         user.setProfileImageId(profileImageId);
@@ -339,7 +334,7 @@ public class UserService {
     public boolean activateUser(String code) {
         User user = userRepository
                 .findUserByActivateCode(code)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new UserNotFoundException("User  not found"));
 
         if(user != null){
             user.setActivated(true);
@@ -358,10 +353,10 @@ public class UserService {
     @Transactional
     public void unSubscribeGroup(String userName, Long groupId) {
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group  not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group  not found"));
 
         group.getSubscribers().remove(user);
 
@@ -378,9 +373,10 @@ public class UserService {
     public void subscribeToGroup(String username, Long groupId) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new UserNotFoundException("User  not found"));
+
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         if(user.getSubscribedGroups().contains(group)){
             throw new RuntimeException("Group  already exists");
@@ -393,7 +389,6 @@ public class UserService {
             group.getSubscribers().add(user);
         }
 
-
         userRepository.saveAndFlush(user);
 
         groupRepository.saveAndFlush(group);
@@ -403,7 +398,7 @@ public class UserService {
     public void addInterestsToUser(String username, Set<String> interests) {
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new UserNotFoundException("Group not found"));
 
         if (interests == null || interests.isEmpty()) {
             throw new IllegalArgumentException("Members set cannot be null");

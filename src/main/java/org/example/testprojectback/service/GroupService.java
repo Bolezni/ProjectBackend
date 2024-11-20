@@ -3,6 +3,9 @@ package org.example.testprojectback.service;
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.controller.helper.ControllerHelper;
 import org.example.testprojectback.dto.*;
+import org.example.testprojectback.exceptions.GroupNotFoundException;
+import org.example.testprojectback.exceptions.ResourceNotFoundException;
+import org.example.testprojectback.exceptions.UserNotFoundException;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
@@ -35,7 +38,7 @@ public class GroupService {
     public void createGroup(String userName, GroupCreateDto groupDto) {
         User user = userRepository
                 .findByUsername(userName)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Group group = Group.builder()
                 .name(groupDto.name())
@@ -55,11 +58,11 @@ public class GroupService {
             Set<Interest> interests = interestsName
                     .stream()
                     .map(it -> interestRepository.findByName(it)
-                            .orElseThrow(() -> new RuntimeException("Interest not found")))
+                            .orElseThrow(() -> new ResourceNotFoundException("Interest not found")))
                     .collect(Collectors.toSet());
 
             if(interests.isEmpty()) {
-                throw new RuntimeException("interests not found");
+                throw new ResourceNotFoundException("interests not found");
             }
 
             group.getInterests().addAll(interests);
@@ -73,11 +76,11 @@ public class GroupService {
             Set<User> users = subscriberString
                     .stream()
                     .map(it -> userRepository.findByUsername(it)
-                            .orElseThrow(() -> new RuntimeException("Interest not found")))
+                            .orElseThrow(() -> new ResourceNotFoundException("Interest not found")))
                     .collect(Collectors.toSet());
 
             if(users.isEmpty()) {
-                throw new RuntimeException("Users not found");
+                throw new UserNotFoundException("Users not found");
             }
 
             group.getSubscribers().addAll(users);
@@ -90,7 +93,7 @@ public class GroupService {
     public void addInterestToGroup(Long groupId, Set<String> interestsName) {
         Group group = groupRepository
                 .findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         Set<Interest> interests = new HashSet<>(interestRepository.findAllByNameIn(interestsName));
 
@@ -139,14 +142,14 @@ public class GroupService {
     @Transactional
     public void deleteGroup(Long groupId) {
         groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         groupRepository.deleteById(groupId);
     }
 
     public GroupDto getGroupById(Long groupID) {
         Group group = groupRepository.findById(groupID)
-                .orElseThrow(() -> new RuntimeException("Group not exist"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         return groupDtoMapper.toDto(group);
     }
@@ -155,7 +158,7 @@ public class GroupService {
     public void updateGroup(Long groupId, GroupUpdateDto groupUpdateDto){
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new GroupNotFoundException("Group not found"));
 
         Optional.ofNullable(groupUpdateDto.chars())
                 .filter(chars -> !chars.isEmpty())
