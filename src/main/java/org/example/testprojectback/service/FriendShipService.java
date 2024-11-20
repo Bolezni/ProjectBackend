@@ -53,7 +53,6 @@ public class FriendShipService {
             throw new RuntimeException("Username and Friend name cannot be the same");
         }
 
-
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -211,7 +210,7 @@ public class FriendShipService {
         User user2 = userRepository.findByUsername(userName2)
                 .orElseThrow(() -> new RuntimeException("User  2 not found"));
 
-        return friendshipRepository.existsByUserAndFriend(user1, user2) ||
+        return friendshipRepository.existsByUserAndFriend(user1, user2) &&
         friendshipRepository.existsByFriendAndUser(user2, user1);
     }
 }

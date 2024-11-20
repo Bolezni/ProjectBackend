@@ -51,7 +51,7 @@ public class NotificationController {
 
         List<UserDto> availableUsers = notificationService.getAvailableUsersForInvitation(groupId,username);
 
-        return ResponseEntity.ok(availableUsers);
+        return ResponseEntity.ok().body(availableUsers);
     }
 
 }

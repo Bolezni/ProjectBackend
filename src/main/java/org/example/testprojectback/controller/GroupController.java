@@ -1,17 +1,14 @@
 package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.testprojectback.dto.GroupDto;
-import org.example.testprojectback.dto.GroupUpdateDto;
-import org.example.testprojectback.dto.InterestDto;
-import org.example.testprojectback.dto.NotificationDto;
-import org.example.testprojectback.model.Group;
+import org.example.testprojectback.dto.*;
 import org.example.testprojectback.service.GroupService;
 import org.example.testprojectback.service.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +37,7 @@ public class GroupController {
 
     @GetMapping(GET_ALL_GROUPS)
     public ResponseEntity<Page<GroupDto>> getAllGroups(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<GroupDto> groups = groupService.getAllGroups(page, size);
@@ -51,7 +48,7 @@ public class GroupController {
 
     @PostMapping(CREATE_GROUP)
     public ResponseEntity<?> createGroup(@PathVariable(name = "login") String userName,
-                                         @RequestBody GroupDto group) {
+                                         @Valid @RequestBody GroupCreateDto group) {
          groupService.createGroup(userName,group);
 
          return ResponseEntity.ok()

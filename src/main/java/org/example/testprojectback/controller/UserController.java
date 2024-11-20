@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.*;
 import org.example.testprojectback.service.UserService;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +38,7 @@ public class UserController {
     @DeleteMapping(DELETE_USER_BY_LOGIN)
     public ResponseEntity<?> deleteUser(@PathVariable(name = "login") String userName) {
         userService.delete(userName);
-        return ResponseEntity
-                .ok(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(GET_INTERESTS)
@@ -54,7 +52,7 @@ public class UserController {
 
     @GetMapping(GET_USER_GROUPS)
     public ResponseEntity<Page<GroupDto>> getUserSubscribedGroups(@PathVariable(name = "login") String userName,
-                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size) {
         Page<GroupDto> groups = userService.getUserSubscribedGroups(userName, page, size);
         return ResponseEntity.ok(groups);
@@ -63,7 +61,7 @@ public class UserController {
     @GetMapping(GET_USER_CREATED_GROUPS)
     public ResponseEntity<Page<GroupDto>> getUserCreatedGroups(
             @PathVariable(name = "login") String userName,
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<GroupDto> groups = userService.getUserCreatedGroups(userName, page, size);
@@ -75,8 +73,7 @@ public class UserController {
                                         @RequestBody UserDtoUpdate userDtoUpdate) {
         userService.updateUserProfile(userName,userDtoUpdate);
 
-        return ResponseEntity.ok()
-                .body(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(UPDATE_SECURITY_INFO)
@@ -84,8 +81,7 @@ public class UserController {
                                                     @Valid @RequestBody UserSecurityDataDto userSecurityDataDto){
         userService.updateSecurityUserData(username,userSecurityDataDto);
 
-        return ResponseEntity.ok()
-                .body(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(UPLOAD_PROFILE_IMAGE)
@@ -101,8 +97,7 @@ public class UserController {
                                                      @RequestParam String interestName) {
         userService.removeInterestFromUser (userName, interestName);
 
-        return ResponseEntity.ok()
-                .body(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(DELETE_INTERESTS)
@@ -155,7 +150,4 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
-
-
-
 }

@@ -2,10 +2,7 @@ package org.example.testprojectback.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.controller.helper.ControllerHelper;
-import org.example.testprojectback.dto.GroupDto;
-import org.example.testprojectback.dto.GroupUpdateDto;
-import org.example.testprojectback.dto.InterestDto;
-import org.example.testprojectback.dto.UserDto;
+import org.example.testprojectback.dto.*;
 import org.example.testprojectback.mapper.GroupDtoMapper;
 import org.example.testprojectback.model.Group;
 import org.example.testprojectback.model.Interest;
@@ -35,7 +32,7 @@ public class GroupService {
     private final ControllerHelper controllerHelper;
 
     @Transactional
-    public void createGroup(String userName, GroupDto groupDto) {
+    public void createGroup(String userName, GroupCreateDto groupDto) {
         User user = userRepository
                 .findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -160,10 +157,21 @@ public class GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        group.setChars(groupUpdateDto.chars());
-        group.setName(groupUpdateDto.name());
-        group.setColor(groupUpdateDto.color());
-        group.setDescription(groupUpdateDto.description());
+        Optional.ofNullable(groupUpdateDto.chars())
+                .filter(chars -> !chars.isEmpty())
+                .ifPresent(group::setChars);
+
+        Optional.ofNullable(groupUpdateDto.color())
+                .filter(color -> !color.isEmpty())
+                .ifPresent(group::setColor);
+
+        Optional.ofNullable(groupUpdateDto.name())
+                .filter(name -> !name.isEmpty())
+                .ifPresent(group::setName);
+
+        Optional.ofNullable(groupUpdateDto.description())
+                .filter(description -> !description.isEmpty())
+                .ifPresent(group::setDescription);
 
         controllerHelper.switchInterests(group, groupUpdateDto.interests());
 

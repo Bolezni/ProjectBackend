@@ -2,7 +2,7 @@ package org.example.testprojectback.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.testprojectback.dto.UserCredentialsDto;
-import org.example.testprojectback.dto.UserDto;
+import org.example.testprojectback.dto.UserRegisterDto;
 import org.example.testprojectback.sercurity.RefreshTokenDto;
 import org.example.testprojectback.sercurity.jwt.JwtAuthDto;
 import org.example.testprojectback.service.UserService;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,7 +38,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(REGISTER)
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegisterDto userDto) {
         userService.addUser(userDto);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION)

@@ -29,14 +29,14 @@ public class FriendShipController {
 
     @PostMapping(REQUEST_FRIEND)
     public FriendShipDto sendFriendRequest(@RequestParam(name = "login") String userName,
-                                                           @RequestParam(name = "friendLogin") String friendName){
+                                           @RequestParam(name = "friendLogin") String friendName){
         return friendShipService.sendFriendRequest(userName, friendName);
     }
 
 
     @PostMapping(ACCEPT_FRIEND)
     public FriendShipDto acceptFriendRequest(@RequestParam(name = "login") String userName,
-                                                          @RequestParam(name = "friendLogin") String friendName) {
+                                             @RequestParam(name = "friendLogin") String friendName) {
         return friendShipService.acceptFriendRequest(userName, friendName);
     }
 
@@ -49,7 +49,7 @@ public class FriendShipController {
     @GetMapping(GET_FRIENDS)
     public ResponseEntity<Page<UserFriendDto>> getFriends(
             @RequestParam(name = "login") String userName,
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<UserFriendDto> friends = friendShipService.getFriends(userName, page, size);
@@ -57,10 +57,10 @@ public class FriendShipController {
     }
 
     @DeleteMapping(REMOVE)
-    public ResponseEntity<String> removeFriend(@RequestParam String userName,
+    public ResponseEntity<?> removeFriend(@RequestParam String userName,
                                                @RequestParam String friendName) {
         friendShipService.removeFriend(userName, friendName);
-        return ResponseEntity.ok("Friend removed successfully.");
+        return ResponseEntity.ok().body("Remove friend successfully");
     }
 
     @GetMapping(IS_FRIEND)

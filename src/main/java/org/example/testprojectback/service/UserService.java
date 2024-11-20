@@ -50,7 +50,7 @@ public class UserService {
     private final ControllerHelper controllerHelper;
 
     @Transactional
-    public void addUser(UserDto userDto) {
+    public void addUser(UserRegisterDto userDto) {
 
         if(userRepository.existsByEmail(userDto.email())){
             throw new IllegalArgumentException(
@@ -233,31 +233,30 @@ public class UserService {
 
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User  not found"));
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-        if(userSecurity.newUserName().equals(user.getUsername()) &&
-                userRepository.existsByUsername(userSecurity.newUserName())) {
-            throw new IllegalArgumentException("Username already exists");
+        if (!passwordEncoder.matches(userSecurity.oldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Неверный старый пароль");
         }
 
-        if(userSecurity.oldPassword().equals(user.getPassword())) {
-            throw new IllegalArgumentException("Old password does not match");
+        String newUserName = userSecurity.newUserName();
+        if (newUserName != null && !newUserName.isEmpty() && !newUserName.equals(user.getUsername())) {
+            if (userRepository.existsByUsername(newUserName)) {
+                throw new IllegalArgumentException("Имя пользователя уже существует");
+            }
+            user.setUsername(newUserName);
         }
-        if(userSecurity.newPassword().equals(user.getPassword())) {
-            throw new IllegalArgumentException("Password already exists");
+
+        String newPassword = userSecurity.newPassword();
+        if (newPassword != null && !newPassword.isEmpty()) {
+            if (passwordEncoder.matches(newPassword, user.getPassword())) {
+                throw new IllegalArgumentException("Новый пароль совпадает с текущим");
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
         }
-
-        Optional.ofNullable(userSecurity.newUserName())
-                .filter(name -> !name.isEmpty())
-                .ifPresent(user::setUsername);
-
-        String pass = passwordEncoder.encode(userSecurity.newPassword());
-
-        Optional.ofNullable(pass)
-                .filter(password -> !password.isEmpty())
-                .ifPresent(user::setPassword);
 
         userRepository.saveAndFlush(user);
+
     }
 
 
@@ -388,8 +387,6 @@ public class UserService {
         }else {
             user.getSubscribedGroups().add(group);
         }
-
-
         if(group.getSubscribers().contains(user)){
             throw new RuntimeException("User  already exists");
         }else{
@@ -413,7 +410,6 @@ public class UserService {
         }
 
         Set<Interest> interestSet = new HashSet<>(interestRepository.findAllByNameIn(interests));
-
 
         user.getInterests().addAll(interestSet);
 
