@@ -678,7 +678,7 @@ databaseChangeLog:
                   value: null
               - column:
                   name: password
-                  value: "$2b$12$eW5wIJ2HRQo.TpYvskNpS.xjFO26bK/XZ.yDwNzHCEfEpBr.dOXpC" # хэш для "admin"
+                  value: "$2y$10$em5XMpAKsZqhQQaWSB6n7OiK5rTbWl3y2KYc6oVLl6TycJhLz1w1u" # хэш для "admin"
               - column:
                   name: email
                   value: "admin@example.com"
