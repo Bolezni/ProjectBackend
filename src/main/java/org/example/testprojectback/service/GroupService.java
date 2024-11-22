@@ -110,8 +110,8 @@ public class GroupService {
 
     public List<GroupDto> fetchGroupsByName(Optional<String> optionalPrefixName) {
         if (optionalPrefixName.isPresent() && !optionalPrefixName.get().isEmpty()) {
-
-            List<Group> groups = groupRepository.findByNameStartingWith(optionalPrefixName.get());
+            String prefixName = optionalPrefixName.get().toLowerCase();
+            List<Group> groups = groupRepository.findByNameStartingWithIgnoreCase(prefixName);
 
             return groups.stream()
                     .map(groupDtoMapper::toDto)

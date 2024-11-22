@@ -696,10 +696,10 @@ databaseChangeLog:
                   value: "Administrator account with all permissions."
               - column:
                   name: tg_name
-                  value: "@admin_tg"
+                  value: "admin_tg"
               - column:
                   name: profile_image_id
-                  value: ""
+                  value: "pingvin"
               - column:
                   name: is_admin
                   valueBoolean: true

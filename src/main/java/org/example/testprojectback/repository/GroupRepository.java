@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    List<Group> findByNameStartingWith(String name);
+    @Query("SELECT g FROM Group g WHERE LOWER(g.name) LIKE LOWER(CONCAT(:prefix, '%'))")
+    List<Group> findByNameStartingWithIgnoreCase(@Param("prefix") String prefix);
     List<Group> findByInterestsIn(Set<Interest> interestSet);
 
     @Modifying
