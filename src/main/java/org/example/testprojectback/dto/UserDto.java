@@ -9,7 +9,6 @@ public record UserDto(
         String firstname,
         String lastname,
         String patronymic,
-        String password,
         String email,
         Gender gender,
         String tgName,

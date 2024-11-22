@@ -12,7 +12,6 @@ public class UserDtoMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPatronymic(),
-                user.getPassword(),
                 user.getEmail(),
                 user.getGender(),
                 user.getTgName(),
@@ -33,7 +32,6 @@ public class UserDtoMapper {
                 .firstName(userDto.firstname())
                 .lastName(userDto.lastname())
                 .patronymic(userDto.patronymic())
-                .password(userDto.password())
                 .email(userDto.email())
                 .gender(userDto.gender())
                 .tgName(userDto.tgName())
