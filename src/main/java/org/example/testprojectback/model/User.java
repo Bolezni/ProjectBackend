@@ -34,7 +34,7 @@ public class User{
     @Column(nullable = false)
     private String lastName;
 
-    private String patronymic; //отчество
+    private String patronymic;
 
     @Column(nullable = false)
     @Min(value = 6,message = "Password must consist of at least 6 characters")
@@ -70,6 +70,13 @@ public class User{
     private boolean isAdmin = false;
 
     private LocalDate birthDay;
+
+    @Column(nullable = false)
+    private String secretKey;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean mfaEnabled = false;
 
     @OneToMany(mappedBy = "creator")
     @Builder.Default

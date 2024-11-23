@@ -40,6 +40,7 @@ public class UserService {
     private final InterestRepository interestRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final TwoFactorAuthService twoFactorAuthService;
 
 
     private final InterestDtoMapper interestDtoMapper;
@@ -61,6 +62,7 @@ public class UserService {
         if(userRepository.existsByUsername(userDto.username())){
             throw new UsernameAlreadyExistsException("username already taken");
         }
+        String secret = twoFactorAuthService.generateSecretKey();
 
         User user = User.builder()
                 .username(userDto.username())
@@ -75,6 +77,7 @@ public class UserService {
                 .gender(userDto.gender())
                 .isAdmin(userDto.isAdmin())
                 .profileImageId(userDto.profileImageId())
+                .secretKey(secret)
                 .build();
 
         String activatedCode = generateSecurityCode();
@@ -418,4 +421,13 @@ public class UserService {
         return groups.map(groupDtoMapper::toDto);
     }
 
+    public Map<String, String> linkQrCode(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User  not found"));
+        String secret = user.getSecretKey();
+         String qrcode =  twoFactorAuthService.generateQRUrl(secret,user.getUsername());
+        Map<String, String> response = new HashMap<>();
+        response.put("qrCodeUrl", qrcode);
+        return response;
+    }
 }

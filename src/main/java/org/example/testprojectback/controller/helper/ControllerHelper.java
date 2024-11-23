@@ -47,7 +47,7 @@ public class ControllerHelper {
         currentInterests.addAll(interestsToAdd);
     }
 
-    public void switchInterests(Group group,Set<InterestDto> interests){
+    public void switchInterests(Group group, Set<InterestDto> interests){
         if (interests != null) {
             Set<String> interestNames = interests
                     .stream()

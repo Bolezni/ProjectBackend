@@ -6,7 +6,7 @@ spring:
       username: postgres
       password: admin
   liquibase:
-    change-log: db/changelog/2024/11/19-01-changelog.yaml
+    change-log: db/changelog/2024/11/23-02-changelog.yaml
   jpa:
     properties:
       hibernate:
@@ -25,5 +25,4 @@ spring:
 
 server:
   port: 8080
-
 

@@ -1,0 +1,572 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1732378028438-1
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_friendship
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: friend_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: friendship
+  - changeSet:
+      id: 1732378028438-2
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_friendships
+                  name: friend_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_friendships
+                  name: user_id
+                  type: BIGINT
+            tableName: friendships
+  - changeSet:
+      id: 1732378028438-3
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_group_interest
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: group_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: interest_id
+                  type: BIGINT
+            tableName: group_interest
+  - changeSet:
+      id: 1732378028438-4
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_groups
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: chars
+                  type: VARCHAR(3)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: color
+                  type: VARCHAR(6)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: creator_id
+                  type: BIGINT
+            tableName: groups
+  - changeSet:
+      id: 1732378028438-5
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_groups_subscribers
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: group_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: subscribers_id
+                  type: BIGINT
+            tableName: groups_subscribers
+  - changeSet:
+      id: 1732378028438-6
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_interest_users
+                  name: interest_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_interest_users
+                  name: user_id
+                  type: BIGINT
+            tableName: interest_users
+  - changeSet:
+      id: 1732378028438-7
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_interests
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color
+                  type: VARCHAR(6)
+            tableName: interests
+  - changeSet:
+      id: 1732378028438-8
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_notifications
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: inviter_id
+                  type: BIGINT
+              - column:
+                  name: invitee_id
+                  type: BIGINT
+              - column:
+                  name: group_id
+                  type: BIGINT
+              - column:
+                  name: created_at
+                  type: DATETIME
+            tableName: notifications
+  - changeSet:
+      id: 1732378028438-9
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_group
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: group_id
+                  type: BIGINT
+            tableName: user_group
+  - changeSet:
+      id: 1732378028438-10
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_interest
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: interest_id
+                  type: BIGINT
+            tableName: user_interest
+  - changeSet:
+      id: 1732378028438-11
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: patronymic
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: is_activated
+                  type: BOOLEAN
+              - column:
+                  name: activate_code
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: gender
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(600)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tg_name
+                  type: VARCHAR(255)
+              - column:
+                  name: profile_image_id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: is_admin
+                  type: BOOLEAN
+              - column:
+                  name: birth_day
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: secret_key
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: mfa_enabled
+                  type: BOOLEAN
+            tableName: users
+  - changeSet:
+      id: 1732378028438-12
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: name
+            constraintName: uc_interests_name
+            tableName: interests
+  - changeSet:
+      id: 1732378028438-13
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: uc_users_username
+            tableName: users
+  - changeSet:
+      id: 1732378028438-14
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: friend_id
+            baseTableName: friendship
+            constraintName: FK_FRIENDSHIP_ON_FRIEND
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-15
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: friendship
+            constraintName: FK_FRIENDSHIP_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-16
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: creator_id
+            baseTableName: groups
+            constraintName: FK_GROUPS_ON_CREATOR
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-17
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: group_id
+            baseTableName: groups_subscribers
+            constraintName: FK_GROUPS_SUBSCRIBERS_ON_GROUP
+            referencedColumnNames: id
+            referencedTableName: groups
+  - changeSet:
+      id: 1732378028438-18
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: subscribers_id
+            baseTableName: groups_subscribers
+            constraintName: FK_GROUPS_SUBSCRIBERS_ON_SUBSCRIBERS
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-19
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: group_id
+            baseTableName: group_interest
+            constraintName: FK_GROUP_INTEREST_ON_GROUP
+            referencedColumnNames: id
+            referencedTableName: groups
+  - changeSet:
+      id: 1732378028438-20
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: interest_id
+            baseTableName: group_interest
+            constraintName: FK_GROUP_INTEREST_ON_INTEREST
+            referencedColumnNames: id
+            referencedTableName: interests
+  - changeSet:
+      id: 1732378028438-21
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: group_id
+            baseTableName: notifications
+            constraintName: FK_NOTIFICATIONS_ON_GROUP
+            referencedColumnNames: id
+            referencedTableName: groups
+  - changeSet:
+      id: 1732378028438-22
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: invitee_id
+            baseTableName: notifications
+            constraintName: FK_NOTIFICATIONS_ON_INVITEE
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-23
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: inviter_id
+            baseTableName: notifications
+            constraintName: FK_NOTIFICATIONS_ON_INVITER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-24
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: group_id
+            baseTableName: user_group
+            constraintName: FK_USER_GROUP_ON_GROUP
+            referencedColumnNames: id
+            referencedTableName: groups
+  - changeSet:
+      id: 1732378028438-25
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_group
+            constraintName: FK_USER_GROUP_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-26
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: interest_id
+            baseTableName: user_interest
+            constraintName: FK_USER_INTEREST_ON_INTEREST
+            referencedColumnNames: id
+            referencedTableName: interests
+  - changeSet:
+      id: 1732378028438-27
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_interest
+            constraintName: FK_USER_INTEREST_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-28
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: friend_id
+            baseTableName: friendships
+            constraintName: fk_fri_on_friend
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-29
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: friendships
+            constraintName: fk_fri_on_user
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1732378028438-30
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: interest_id
+            baseTableName: interest_users
+            constraintName: fk_intuse_on_interest
+            referencedColumnNames: id
+            referencedTableName: interests
+  - changeSet:
+      id: 1732378028438-31
+      author: trubi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: interest_users
+            constraintName: fk_intuse_on_user
+            referencedColumnNames: id
+            referencedTableName: users
+

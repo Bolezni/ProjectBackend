@@ -38,6 +38,8 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.warrenstrange:googleauth:1.5.0'
+    implementation 'org.jboss.aerogear:aerogear-otp-java:1.0.0'
 
 
 }
