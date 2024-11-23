@@ -570,3 +570,272 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: users
 
+
+  - changeSet:
+      id: 1732378028438-32
+      author: trubi
+      changes:
+        # Добавление администратора
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "admin"
+              - column:
+                  name: first_name
+                  value: "Admin"
+              - column:
+                  name: last_name
+                  value: "Adminovich"
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: password
+                  value: "$2y$10$9/IffpOqAXaokj/RqTncN.Bzf6K4CCag3SSPyuVdHZrHgbToVmKX." # Укажите хэш пароля
+              - column:
+                  name: is_activated
+                  value: true
+              - column:
+                  name: is_admin
+                  value: true
+              - column:
+                  name: tg_name
+                  value: "admin_tg"
+              - column:
+                  name: gender
+                  value: "Male"
+              - column:
+                  name: mfa_enabled
+                  value: true
+              - column:
+                  name: secret_key
+                  value: "secret_key_value"
+              - column:
+                  name: description
+                  value: "System administrator"
+              - column:
+                  name: profile_image_id
+                  value: pingvin
+              - column:
+                  name: birth_day
+                  value: "1990-01-01"
+  - changeSet:
+      id: 1732378028438-33
+      author: trubi
+      changes:
+        # Добавление интересов
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Фотографии"
+              - column:
+                  name: color
+                  value: "FF5733"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Музыка"
+              - column:
+                  name: color
+                  value: "33FF57"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Путешествия"
+              - column:
+                  name: color
+                  value: "3357FF"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Чтение"
+              - column:
+                  name: color
+                  value: "FF33A1"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Игры"
+              - column:
+                  name: color
+                  value: "A133FF"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Кулинария"
+              - column:
+                  name: color
+                  value: "FFB533"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Спорт"
+              - column:
+                  name: color
+                  value: "33FFF5"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Искусство"
+              - column:
+                  name: color
+                  value: "57FF33"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Технологии"
+              - column:
+                  name: color
+                  value: "FF5733"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Фильмы"
+              - column:
+                  name: color
+                  value: "5B33FF"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Наука"
+              - column:
+                  name: color
+                  value: "FF0000"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Мода"
+              - column:
+                  name: color
+                  value: "5B33FF"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Рисования"
+              - column:
+                  name: color
+                  value: "E6EFA"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "История"
+              - column:
+                  name: color
+                  value: "40E0D0"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Астрономия"
+              - column:
+                  name: color
+                  value: "FFD700"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Экология"
+              - column:
+                  name: color
+                  value: "008000"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Программирование"
+              - column:
+                  name: color
+                  value: "5B33FF"
+        - insert:
+            tableName: interests
+            columns:
+              - column:
+                  name: name
+                  value: "Волонтерство"
+              - column:
+                  name: color
+                  value: "FFDAB9"
+
+  - changeSet:
+      id: 1732378028438-34
+      author: trubi
+      changes:
+        # Добавление групп с интересами
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "FOT"
+              - column:
+                  name: name
+                  value: "Клуб фотографов"
+              - column:
+                  name: creator_id
+                  value: 1
+              - column:
+                  name: description
+                  value: "Для любителей фотографий"
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "MUZ"
+              - column:
+                  name: name
+                  value: "Музыканты"
+              - column:
+                  name: creator_id
+                  value: 1
+              - column:
+                  name: description
+                  value: "Группа для любителей музыки"
+        - insert:
+            tableName: groups
+            columns:
+              - column:
+                  name: chars
+                  value: "TUR"
+              - column:
+                  name: name
+                  value: "Туризм"
+              - column:
+                  name: creator_id
+                  value: 1
+              - column:
+                  name: description
+                  value: "Группа для любителей музыки"
