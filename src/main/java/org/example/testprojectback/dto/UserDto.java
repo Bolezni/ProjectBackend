@@ -17,6 +17,7 @@ public record UserDto(
         Integer age,
         boolean activeCode,
         boolean isAdmin,
+        boolean mfaEnabled,
         LocalDate birthDay
 ) {
 }

@@ -20,7 +20,7 @@ public class UserDtoMapper {
                 user.getAge(),
                 user.isActivated(),
                 user.isAdmin(),
-
+                user.isMfaEnabled(),
                 user.getBirthDay()
         );
     }
@@ -39,6 +39,7 @@ public class UserDtoMapper {
                 .profileImageId(userDto.profileImageId())
                 .birthDay(userDto.birthDay())
                 .isActivated(userDto.activeCode())
+                .mfaEnabled(userDto.mfaEnabled())
                 .build();
     }
 }
